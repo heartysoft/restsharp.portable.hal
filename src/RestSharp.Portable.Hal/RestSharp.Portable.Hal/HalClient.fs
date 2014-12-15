@@ -13,6 +13,10 @@ type Resource  =
     { requestContext : RequestContext; response : IRestResponse; data: JObject}
     member this.Parse<'T>() = 
         this.data.ToObject<'T>()
+    member this.Follow next rest : RequestContext = 
+        let newRequestParameters = 
+            {this.requestContext.requestParameters with {rootUrl = next; follow=rest }}
+        {this.requestContext with requestParameters = newRequestParameters}
 and
     RequestContext = 
     { environment: EnvironmentParameters; requestParameters : RequestParameters}
@@ -31,7 +35,7 @@ and
         
         JObject.Parse(str)
 
-    member this.GetAsync () : Async<Resource> = 
+    member private this.getResponse () : Async<Resource> = 
         async {
             let client = RestClient(this.environment.domain)
             let restRequest = RestRequest(this.requestParameters.rootUrl) :> IRestRequest
@@ -45,6 +49,28 @@ and
             let data = this.parse(res)
             return { Resource.requestContext = this; response = res; data=data}
         } 
+
+    member this.GetAsync () : Async<Resource> = 
+        async {
+            let! rootResponse = this.getResponse()
+            
+            let final = 
+                match this.requestParameters.follow with
+                | [] -> rootResponse
+                | x::xs ->
+                    let newRequest : RequestContext = rootResponse.Follow x xs
+                    async {
+                        let! res = newRequest.GetAsync()
+                        return res
+                    }
+            return final
+        }
+//        this.requestParameters.follow
+//        |> List.fold (fun (state:Resource) follow -> 
+//                
+//                state) rootResponse
+
+        
     member this.Follow (rel:string) : RequestContext =
         let rp = this.requestParameters
         let newRp = {rp with follow = {rel=rel}::rp.follow}
