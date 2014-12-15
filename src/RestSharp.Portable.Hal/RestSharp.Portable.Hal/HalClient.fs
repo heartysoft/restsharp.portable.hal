@@ -5,7 +5,7 @@ open Newtonsoft.Json.Linq
 type Follow = 
     {rel:string}
     member this.GetExpandedUrl (rp:RequestParameters) (env:EnvironmentParameters) (data:JObject) : string = 
-        let link = data.["_links"].[this.rel].Value<string>()
+        let link = data.["_links"].[this.rel].Value<string>("href")
         link
 and 
     RequestParameters = { rootUrl : string; follow: Follow list }

@@ -35,6 +35,20 @@ type HalTests() =
 
         
         Assert.AreEqual(-1, tjo.id)
+    
+    [<Test>]
+    member test.``should be able to get resource following multiple links`` () =
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("register")
+                .Follow("self")
+                .GetAsync() |> Async.RunSynchronously
+        
+        let jo = resource.Parse()
+        let tjo = resource.Parse<'RegisterForm>()
+
+        
+        Assert.AreEqual(-1, tjo.id)
 
     
     
