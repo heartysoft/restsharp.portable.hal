@@ -2,20 +2,26 @@
 open RestSharp.Portable
 open Newtonsoft.Json.Linq
 
-type Follow = {rel:string}
-
-type RequestParameters = { rootUrl : string; follow: Follow list }
-
-type EnvironmentParameters = { domain : string; headers : Parameter list }
+type Follow = 
+    {rel:string}
+    member this.GetExpandedUrl (rp:RequestParameters) (env:EnvironmentParameters) (data:JObject) : string = 
+        let link = data.["_links"].[this.rel].Value<string>()
+        link
+and 
+    RequestParameters = { rootUrl : string; follow: Follow list }
+and
+    EnvironmentParameters = { domain : string; headers : Parameter list }
 
 
 type Resource  = 
     { requestContext : RequestContext; response : IRestResponse; data: JObject}
     member this.Parse<'T>() = 
         this.data.ToObject<'T>()
-    member this.Follow next rest : RequestContext = 
+    member this.Follow (next:Follow) rest : RequestContext = 
         let newRequestParameters = 
-            {this.requestContext.requestParameters with {rootUrl = next; follow=rest }}
+            {this.requestContext.requestParameters 
+                with rootUrl = next.GetExpandedUrl this.requestContext.requestParameters this.requestContext.environment this.data; 
+                     follow=rest }
         {this.requestContext with requestParameters = newRequestParameters}
 and
     RequestContext = 
@@ -58,11 +64,9 @@ and
                 match this.requestParameters.follow with
                 | [] -> rootResponse
                 | x::xs ->
-                    let newRequest : RequestContext = rootResponse.Follow x xs
-                    async {
-                        let! res = newRequest.GetAsync()
-                        return res
-                    }
+                        let newRequest : RequestContext = rootResponse.Follow x xs
+                        newRequest.GetAsync() |> Async.RunSynchronously
+                    
             return final
         }
 //        this.requestParameters.follow
