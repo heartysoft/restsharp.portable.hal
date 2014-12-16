@@ -230,8 +230,28 @@ type HalTests() =
         
         let ignored = Assert.AreEqual("Johny", resource.name)
         Assert.AreEqual("lala", resource.anotherCard.idAgain)
-      
+
+    [<Test>]
+    member test.``should put to server`` () =
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("register")
+                .PutAsync(newData) |> Async.RunSynchronously
+
+        Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
+
+    [<Test>]
+    member test.``should delete to server`` () =
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("register")
+                .DeleteAsync(newData) |> Async.RunSynchronously
+        
+        Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
                
 
 
+    
     
