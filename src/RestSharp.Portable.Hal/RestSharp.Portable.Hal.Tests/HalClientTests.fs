@@ -2,10 +2,12 @@
 
 open NUnit.Framework
 open RestSharp.Portable.Hal
+open Newtonsoft.Json.Linq
+open System.Net
 
 
 
-let rootUrl = "http://localhost:62582/"
+let rootUrl = "http://C2383:62582/"
 let clientFactory = 
             HalClientFactory()
                 .Accept("application/hal+json")
@@ -106,8 +108,6 @@ type HalTests() =
 
         Assert.AreEqual(expected, resource)  
 
-    
-
     [<Test>]
     member test.``json nuances`` () = 
         let resource = 
@@ -175,9 +175,51 @@ type HalTests() =
         
         let expected = { LoadCardForm.amount = 100M; currency="GBP" }
 
-        Assert.AreEqual(expected, resource)  
+        Assert.AreEqual(expected, resource) 
 
+    [<Test>]
+    member test.``merging forms`` () = 
+        let data = { LoadCardForm.amount = 100M; currency="GBP" }
+        let resource = JObject.Parse("{amount:0, currency:'USD', unknown:22, _links: {self:'/api/foo'}, _embedded:{card:{}}}")
 
+        let merged = merge resource data
+        
+        let ass1 = Assert.AreEqual(100, merged.Value<int>("amount"))
+        let ass2 = Assert.AreEqual("GBP", merged.Value<string>("currency"))
+        let ass3 = Assert.AreEqual(22, merged.Value<int>("unknown"))
+        let ass4 = Assert.IsNull(merged.["_links"])
+        Assert.IsNull(merged.["_embedded"])
+
+    [<Test>]
+    member test.``should Post form to resource`` () = 
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("register")
+                .PostAsync(newData) |> Async.RunSynchronously
+
+        
+        let ignored = Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
+        
+        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
+        
+
+        Assert.AreEqual("/api/CardHolders/55", locationHeader)
+
+    [<Test>]
+    member test.``should Post form to resource and parse body (if you want)`` () = 
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("register")
+                .PostAsync(newData) |> Async.RunSynchronously
+
+        let body = resource.Parse<CardHolderDetails>()
+        
+        let ignored = Assert.AreEqual("Johny", body.name)
+        Assert.AreEqual("lala", body.anotherCard.idAgain)
+      
+               
 
 
     

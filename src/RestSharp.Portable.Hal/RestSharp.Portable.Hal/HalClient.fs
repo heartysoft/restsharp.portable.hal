@@ -8,6 +8,18 @@ module Client =
     let inline (=>) (left:string) (right) =
         (left, right.ToString())
 
+    let merge (jo:JObject) data : JObject = 
+        let newJo = jo.DeepClone() :?> JObject
+        let newData = JObject.FromObject(data)
+        let mergeSettings = new JsonMergeSettings()
+        mergeSettings.MergeArrayHandling <- MergeArrayHandling.Replace
+
+        newJo.Merge(newData, mergeSettings) |> ignore
+        newJo.Remove("_links") |> ignore
+        newJo.Remove("_embedded") |> ignore
+
+        newJo
+
     type Follow = 
         {rel:string; urlSegments:Parameter list}
     and 
@@ -29,7 +41,7 @@ module Client =
                     this.requestContext.requestParameters 
                         with rootUrl = nextUrl;                          
                          urlSegments = this.requestContext.requestParameters.urlSegments @ next.urlSegments;
-                         follow=rest 
+                         follow = rest 
                 }
 
             {this.requestContext with requestParameters = newRequestParameters}
@@ -49,7 +61,9 @@ module Client =
             let encoding = System.Text.Encoding.GetEncoding encodingStr
             let str = encoding.GetString(response.RawBytes, 0, response.RawBytes.Length)
             
-            JObject.Parse(str)
+            match str with
+            | "" -> null 
+            | _ -> JObject.Parse(str)
 
         member private this.getResponse () : Async<Resource> = 
             async {
@@ -80,8 +94,6 @@ module Client =
                     else if target.Type = Newtonsoft.Json.Linq.JTokenType.Null then None
                         else Some target
                 
-                
-
         member private this.getNext (resource:Resource) : Async<Resource> = 
             async {
                 let final = 
@@ -107,22 +119,6 @@ module Client =
             async {
                 let! rootResponse = this.getResponse()
                 return! this.getNext(rootResponse)
-//                let final = 
-//                    match this.requestParameters.follow with
-//                    | [] -> rootResponse
-//                    | x::xs ->
-//                            //we've got response.
-//                            //check response.data to see if follow.rel is in embedded
-//                            //if so, return that as new response
-//                            //otherwise make http call
-//                            let embedded = rootResponse.data.["_embedded"]
-//
-//
-//
-//                            let newRequest : RequestContext = rootResponse.Follow x xs
-//                            newRequest.GetAsync() |> Async.RunSynchronously
-//                        
-//                return final
             }
 
         member this.GetAsync<'T> () : Async<'T> = 
@@ -130,6 +126,30 @@ module Client =
                 let! response = this.GetAsync()
                 return response.Parse<'T>()
             }
+
+        member this.PostAsync data : Async<Resource> =
+            async {
+                let! resource = this.GetAsync()
+                let form = resource.data
+                let merged = merge form data
+                let url = resource.data.["_links"].["self"].Value<string>("href")
+
+                let client = RestClient(resource.requestContext.environment.domain)
+                let restRequest = 
+                    RestRequest(url, System.Net.Http.HttpMethod.Post)
+                        .AddJsonBody(merged) 
+                
+                let parameters = this.environment.headers @ this.requestParameters.urlSegments
+
+                let req = 
+                    parameters
+                    |> List.fold (fun (state:IRestRequest) p -> state.AddParameter(p)) restRequest 
+
+                let! response = client.Execute(req) |> Async.AwaitTask
+
+                return {Resource.data = this.parse(response); Resource.response = response; Resource.requestContext = resource.requestContext}
+            }
+        
         
         member private this.getUrlSegments(urlSegments: (string*string) list) : Parameter list = 
             let segments = 
@@ -143,8 +163,6 @@ module Client =
                         p
                     )
             segments
-
-        
 
         member this.Follow (rel:string, urlSegments: (string*string) list) : RequestContext =
             let rp = this.requestParameters
