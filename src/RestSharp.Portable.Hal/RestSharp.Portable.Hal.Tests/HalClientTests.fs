@@ -191,7 +191,7 @@ type HalTests() =
         Assert.IsNull(merged.["_embedded"])
 
     [<Test>]
-    member test.``should Post form to resource`` () = 
+    member test.``should Post form to server`` () = 
         let newData = {RegistrationForm.id = 55; name="Johny"}
         let resource = 
             client.From("api/cardholders")
@@ -207,7 +207,7 @@ type HalTests() =
         Assert.AreEqual("/api/CardHolders/55", locationHeader)
 
     [<Test>]
-    member test.``should Post form to resource and parse body (if you want)`` () = 
+    member test.``should Post form to server and parse body (if you want)`` () = 
         let newData = {RegistrationForm.id = 55; name="Johny"}
         let resource = 
             client.From("api/cardholders")
@@ -218,6 +218,18 @@ type HalTests() =
         
         let ignored = Assert.AreEqual("Johny", body.name)
         Assert.AreEqual("lala", body.anotherCard.idAgain)
+
+    [<Test>]
+    member test.``should Post form to sever and parse body nicely (if you want)`` () = 
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("register")
+                .PostAsyncAndParse<CardHolderDetails>(newData) |> Async.RunSynchronously
+
+        
+        let ignored = Assert.AreEqual("Johny", resource.name)
+        Assert.AreEqual("lala", resource.anotherCard.idAgain)
       
                
 

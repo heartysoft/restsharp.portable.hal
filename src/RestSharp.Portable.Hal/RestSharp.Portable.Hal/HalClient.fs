@@ -150,6 +150,11 @@ module Client =
                 return {Resource.data = this.parse(response); Resource.response = response; Resource.requestContext = resource.requestContext}
             }
         
+        member this.PostAsyncAndParse<'T> data : Async<'T> = 
+            async {
+                let! resource = this.PostAsync data
+                return resource.Parse<'T>()
+            }
         
         member private this.getUrlSegments(urlSegments: (string*string) list) : Parameter list = 
             let segments = 
