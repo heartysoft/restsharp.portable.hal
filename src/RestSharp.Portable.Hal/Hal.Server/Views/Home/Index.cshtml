@@ -1,0 +1,85 @@
+﻿<div class="jumbotron">
+</div>
+<div class="row">
+    <p><a id="getCardHolder" class="btn btn-primary btn-large">Get a card holder</a></p>
+    <p><a id ="register" class="btn btn-primary btn-large">Register card holder</a></p>
+    <p><a id="update" class="btn btn-primary btn-large">Update someone</a></p>
+    <p><a id="updateCard" class="btn btn-primary btn-large">Update someone's card</a></p>
+</div>
+<div class ="row"><p id ="someDetails"></p></div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(function () {
+
+            var t = traverson.jsonHal.from("/api/cardholders");
+
+            $('#getCardHolder').click(function() {
+                t.newRequest()
+                    .withRequestOptions({
+                        headers: {
+                            'Accept': 'application/hal+json',
+                            'Content-Type': 'application/hal+json'
+                        }
+                    })
+                    .follow("cardHolder").withTemplateParameters({ id: 35 }).getResource(function(e, d) {
+                        console.log(e);
+                        console.log(d);
+                        $('#someDetails').text(JSON.stringify(d));
+                    });
+            });
+
+            $('#register').click(function() {
+                t.newRequest()
+                    .withRequestOptions({
+                        headers: {
+                            'Accept': 'application/hal+json',
+                            'Content-Type': 'application/json'
+                        }
+                    }).follow("register")
+                    .getResource(
+                        submission()
+                        .newData({ id: 123, name: 'Tim' })
+                        .execute(function(ex, dx) {
+                            console.log(ex);
+                            console.log(dx);
+                        })
+                    );
+            });
+
+            $('#update').click(function () {
+                t.newRequest()
+                    .withRequestOptions({
+                        headers: {
+                            'Accept': 'application/hal+json',
+                            'Content-Type': 'application/json'
+                        }
+                    }).follow("cardHolder", "updateCardHolder").withTemplateParameters({ id: 34 })
+                    .getResource(
+                        submission().newData({ name: "Bill" }).execute(function (ex, dx) {
+                            console.log(ex);
+                            console.log(dx);
+                        })
+                    );
+            });
+
+            $('#updateCard').click(function() {
+                t.newRequest()
+                    .withRequestOptions({
+                        headers: {
+                            'Accept': 'application/hal+json',
+                            'Content-Type': 'application/json'
+                        }
+                    }).follow("cardHolder", "card").withTemplateParameters({ id: 34 })
+                    .getResource(
+                        submission().
+                        newData({ name: "Visa" }).execute(function(ex, dx) {
+                            console.log(ex);
+                            console.log(dx);
+                        })
+                    );
+            });
+        })
+    </script>
+}
+
