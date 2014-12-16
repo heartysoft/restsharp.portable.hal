@@ -7,7 +7,7 @@ open System.Net
 
 
 
-let rootUrl = "http://C2383:62582/"
+let rootUrl = "http://localhost:62582/"
 let clientFactory = 
             HalClientFactory()
                 .Accept("application/hal+json")
