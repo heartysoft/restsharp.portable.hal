@@ -68,18 +68,61 @@ module Client =
                 return { Resource.requestContext = this; response = res; data=data}
             } 
 
+        static member private getEmbeddedResource (data:JObject) (rel:string) : Option<JToken> = 
+            let embedded = data.["_embedded"]
+            if embedded = null then
+                None
+            else if embedded.Type = Newtonsoft.Json.Linq.JTokenType.Null then None
+                 else
+                    let target = embedded.[rel]
+                    if target = null then
+                        None
+                    else if target.Type = Newtonsoft.Json.Linq.JTokenType.Null then None
+                        else Some target
+                
+                
+
+        member private this.getNext (resource:Resource) : Async<Resource> = 
+            async {
+                let final = 
+                    match resource.requestContext.requestParameters.follow with
+                    | [] -> resource
+                    | x :: xs -> 
+                        let embedded = RequestContext.getEmbeddedResource resource.data x.rel
+                        match embedded with
+                        | None -> 
+                            let newRequest : RequestContext = resource.Follow x xs
+                            newRequest.GetAsync() |> Async.RunSynchronously
+                        | Some jt -> 
+                            let rp = {resource.requestContext.requestParameters with follow = xs }
+                            let rc = {resource.requestContext with requestParameters=rp }
+                            let nextResource = {resource with data=jt :?> JObject; requestContext = rc }
+
+                            this.getNext nextResource |> Async.RunSynchronously
+
+                return final
+            }
+
         member this.GetAsync () : Async<Resource> = 
             async {
                 let! rootResponse = this.getResponse()
-                
-                let final = 
-                    match this.requestParameters.follow with
-                    | [] -> rootResponse
-                    | x::xs ->
-                            let newRequest : RequestContext = rootResponse.Follow x xs
-                            newRequest.GetAsync() |> Async.RunSynchronously
-                        
-                return final
+                return! this.getNext(rootResponse)
+//                let final = 
+//                    match this.requestParameters.follow with
+//                    | [] -> rootResponse
+//                    | x::xs ->
+//                            //we've got response.
+//                            //check response.data to see if follow.rel is in embedded
+//                            //if so, return that as new response
+//                            //otherwise make http call
+//                            let embedded = rootResponse.data.["_embedded"]
+//
+//
+//
+//                            let newRequest : RequestContext = rootResponse.Follow x xs
+//                            newRequest.GetAsync() |> Async.RunSynchronously
+//                        
+//                return final
             }
 
         member this.GetAsync<'T> () : Async<'T> = 
@@ -101,6 +144,8 @@ module Client =
                     )
             segments
 
+        
+
         member this.Follow (rel:string, urlSegments: (string*string) list) : RequestContext =
             let rp = this.requestParameters
             let segments = this.getUrlSegments urlSegments
@@ -110,6 +155,11 @@ module Client =
         
         member this.Follow (rel:string) : RequestContext =
             this.Follow (rel, [])
+
+        member this.Follow (rels:string list) : RequestContext = 
+            match rels with
+            | [] -> this
+            | x::xs -> this.Follow(x).Follow(xs)
 
         member this.UrlSegments (urlSegments: (string*string) list) : RequestContext = 
            let rp = this.requestParameters

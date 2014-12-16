@@ -25,6 +25,9 @@ type CardHolderDetails = {
         anotherCard:Card
     }
 
+type LoadCardForm = {amount:decimal; currency:string}
+
+type CardEmbedded = { number:int; ``type``:string }
 
 [<TestFixture>]
 type HalTests() = 
@@ -103,7 +106,77 @@ type HalTests() =
 
         Assert.AreEqual(expected, resource)  
 
-    //TODO: Add test for multiple url segments
+    
+
+    [<Test>]
+    member test.``json nuances`` () = 
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("cardHolder", ["id" => "112"])
+                .GetAsync()
+                |> Async.RunSynchronously
+        
+        let embedded = resource.data.["_embedded"]
+
+        Assert.IsNotNull embedded
+
+        let target = embedded.["card"]
+        Assert.IsNotNull target
+
+        let ne = Newtonsoft.Json.Linq.JObject.Parse("{foo:20}")
+        let wn = Newtonsoft.Json.Linq.JObject.Parse("{foo:20, _embedded:null}") //pain
+        let wo = Newtonsoft.Json.Linq.JObject.Parse("{foo:20, _embedded:22}")
+        let we = Newtonsoft.Json.Linq.JObject.Parse("{foo:20, _embedded:{card:1234}}")
+        let wen = Newtonsoft.Json.Linq.JObject.Parse("{foo:20, _embedded:{card:null}}") //pain
+        let wenc = Newtonsoft.Json.Linq.JObject.Parse("{foo:20, _embedded:{foo:null}}")
+        
+        ne.["_embedded"] |> Assert.IsNull
+
+        wo.["_embedded"] |> Assert.IsNotNull
+        
+        we.["_embedded"].["card"] |> Assert.IsNotNull
+        wenc.["_embedded"].["card"] |> Assert.IsNull
+
+        Assert.AreEqual(Newtonsoft.Json.Linq.JTokenType.Null, wn.["_embedded"].Type)
+
+
+    [<Test>]
+    member test.``should follow multiple rels in one go`` () = 
+        let resource = 
+            client.From("api/cardholders")
+                .UrlSegments(["id" => "112"])
+                .Follow(["cardHolder"; "card"])
+                .GetAsync<CardEmbedded>() |> Async.RunSynchronously
+        
+        let expected = { CardEmbedded.number = 101; ``type``="mastercard" }
+
+        Assert.AreEqual(expected, resource)  
+
+    [<Test>]
+    member test.``should get embedded resource`` () = 
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("cardHolder", ["id" => "112"])
+                .Follow("card")
+                .GetAsync<CardEmbedded>() |> Async.RunSynchronously
+        
+        let expected = { CardEmbedded.number = 101; ``type``="mastercard" }
+
+        Assert.AreEqual(expected, resource)  
+
+    [<Test>]
+    member test.``should follow link in embedded resource`` () = 
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("cardHolder", ["id" => "112"])
+                .Follow("card")
+                .Follow("loadCard")
+                .GetAsync<LoadCardForm>() |> Async.RunSynchronously
+        
+        let expected = { LoadCardForm.amount = 100M; currency="GBP" }
+
+        Assert.AreEqual(expected, resource)  
+
 
 
 
