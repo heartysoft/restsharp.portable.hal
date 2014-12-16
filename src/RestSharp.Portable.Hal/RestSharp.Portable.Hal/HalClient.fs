@@ -19,6 +19,7 @@ module Client =
         { requestContext : RequestContext; response : IRestResponse; data: JObject}
         member this.Parse<'T>() = 
             this.data.ToObject<'T>()
+        
         member this.Follow (next:Follow) rest : RequestContext = 
             let nextUrl = this.data.["_links"].[next.rel].Value<string>("href") 
             let nextUrlSegments = next.urlSegments
@@ -86,9 +87,8 @@ module Client =
                 let! response = this.GetAsync()
                 return response.Parse<'T>()
             }
-          
-        member this.Follow (rel:string, urlSegments: (string*string) list) : RequestContext =
-            let rp = this.requestParameters
+        
+        member private this.getUrlSegments(urlSegments: (string*string) list) : Parameter list = 
             let segments = 
                 urlSegments 
                 |> List.map (
@@ -99,6 +99,11 @@ module Client =
                         p.Type <- ParameterType.UrlSegment
                         p
                     )
+            segments
+
+        member this.Follow (rel:string, urlSegments: (string*string) list) : RequestContext =
+            let rp = this.requestParameters
+            let segments = this.getUrlSegments urlSegments
 
             let newRp = {rp with follow = rp.follow @ [{rel=rel; urlSegments=segments}]}
             {this with requestParameters = newRp}
@@ -107,17 +112,9 @@ module Client =
             this.Follow (rel, [])
 
         member this.UrlSegments (urlSegments: (string*string) list) : RequestContext = 
-           let segments = 
-                urlSegments 
-                |> List.map (
-                    fun (k, v) -> 
-                        let p = new Parameter()
-                        p.Name <- k
-                        p.Value <- v
-                        p.Type <- ParameterType.UrlSegment
-                        p
-                    )
-           let newRp = {this.requestParameters with urlSegments = this.requestParameters.urlSegments @ segments}
+           let rp = this.requestParameters
+           let segments = this.getUrlSegments urlSegments
+           let newRp = {rp with urlSegments = rp.urlSegments @ segments}
            {this with requestParameters = newRp} 
 
     type HalClient (env:EnvironmentParameters) = 
