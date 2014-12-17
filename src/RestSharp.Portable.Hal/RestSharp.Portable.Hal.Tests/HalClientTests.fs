@@ -45,9 +45,7 @@ type HalTests() =
                 .Follow("register")
                 .GetAsync() |> Async.RunSynchronously
         
-        let jo = resource.Parse()
         let tjo = resource.Parse<'RegisterForm>()
-
         
         Assert.AreEqual(-1, tjo.id)
     
