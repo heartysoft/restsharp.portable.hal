@@ -166,5 +166,18 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual("lala", body.AnotherCard.IdAgain);
         }
 
+        [Test]
+        public void should_post_form_to_server_and_parse_body_nicely_if_you_want()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var resource =
+                _client.From("/api/cardholders")
+                    .Follow("register")
+                    .PostAsyncAndParse<CardHolderDetails>(newData)
+                    .Result;
+
+            Assert.AreEqual("Johny", resource.Name);
+            Assert.AreEqual("lala", resource.AnotherCard.IdAgain);
+        }
     }
 }

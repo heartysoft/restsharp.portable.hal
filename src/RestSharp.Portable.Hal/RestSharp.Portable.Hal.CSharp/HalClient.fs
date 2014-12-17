@@ -34,7 +34,9 @@ and
             return Resource(res)
         }
         work |> Async.StartAsTask
-        
+
+    member this.PostAsyncAndParse<'T> data = 
+        inner.PostAsyncAndParse<'T> data |> Async.StartAsTask
 
     member this.UrlSegments (segments:System.Object) = 
         let properties = getAnonymousValues segments
