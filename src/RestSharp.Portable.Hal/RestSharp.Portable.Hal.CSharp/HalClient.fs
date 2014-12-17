@@ -72,6 +72,10 @@ type HalClient internal (inner:Client.HalClient) =
 type HalClientFactory private (inner: Client.HalClientFactory) = 
     new() = HalClientFactory(Client.HalClientFactory())
 
+    member this.Header k v =
+        inner.Header k v
+        |> fun c -> HalClientFactory(c)
+
     member this.Accept x = 
         inner.Accept x
         |> fun c -> HalClientFactory(c)

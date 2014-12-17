@@ -33,6 +33,36 @@ namespace Hal.Controllers
 
             return response;
         }
+
+        public HttpResponseMessage Put(RegistrationForm form)
+        {
+            //add or update card holder (just an example)
+
+            var newCardHolder = new CardHolder() { Id = form.Id, Name = form.Name };
+
+            var response = Request.CreateResponse(HttpStatusCode.Created, new CardHolderRepresentation()
+            {
+                AnotherCard = new AnotherCard() { IdAgain = "lala" },
+                Name = form.Name,
+                Id = form.Id
+            });
+
+            response.Headers.Location = LinkTemplates.CardHolders.CardHolder.CreateUri(new { id = newCardHolder.Id });
+
+            return response; 
+        }
+
+        public HttpResponseMessage Delete(RegistrationForm form)
+        {
+            //Delete card holder (this method would not really exist here)
+
+            var response = Request.CreateResponse(HttpStatusCode.OK);
+
+            response.Headers.Location = LinkTemplates.CardHolders.AllCardHolders.CreateUri();
+
+            return response;
+        }
+
     }
 
 

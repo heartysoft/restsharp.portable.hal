@@ -200,8 +200,6 @@ type HalTests() =
         let ignored = Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
         
         let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-        
-
         Assert.AreEqual("/api/CardHolders/55", locationHeader)
 
     [<Test>]
@@ -239,6 +237,9 @@ type HalTests() =
 
         Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
 
+        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
+        Assert.AreEqual("/api/CardHolders/55", locationHeader)
+
     [<Test>]
     member test.``should delete to server`` () =
         let newData = {RegistrationForm.id = 55; name="Johny"}
@@ -247,8 +248,9 @@ type HalTests() =
                 .Follow("register")
                 .DeleteAsync(newData) |> Async.RunSynchronously
         
-        Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
-               
+        Assert.AreEqual(HttpStatusCode.OK, resource.response.StatusCode)
+        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
+        Assert.AreEqual("/api/cardholders", locationHeader)       
 
 
     

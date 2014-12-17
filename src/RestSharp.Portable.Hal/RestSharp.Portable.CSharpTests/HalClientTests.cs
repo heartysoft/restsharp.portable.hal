@@ -179,5 +179,37 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual("Johny", resource.Name);
             Assert.AreEqual("lala", resource.AnotherCard.IdAgain);
         }
+
+        [Test]
+        public void should_put_to_server()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var resource =
+                _client.From("/api/cardholders")
+                    .Follow("register")
+                    .PutAsync(newData)
+                    .Result;
+
+            Assert.AreEqual(HttpStatusCode.Created, resource.Response.StatusCode);
+
+            var location = resource.Response.Headers.GetValues("Location").First();
+            Assert.AreEqual("/api/CardHolders/55", location);
+        }
+
+        [Test]
+        public void should_delete_to_server()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var resource =
+                _client.From("/api/cardholders")
+                    .Follow("register")
+                    .DeleteAsync(newData)
+                    .Result;
+
+            Assert.AreEqual(HttpStatusCode.OK, resource.Response.StatusCode);
+
+            var location = resource.Response.Headers.GetValues("Location").First();
+            Assert.AreEqual("/api/cardholders", location);
+        }
     }
 }
