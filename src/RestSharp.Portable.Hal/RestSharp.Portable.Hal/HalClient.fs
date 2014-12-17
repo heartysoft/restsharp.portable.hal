@@ -205,8 +205,7 @@ module Client =
                 requestParameters = {rootUrl = apiRelativeRoot; follow = []; urlSegments = []}
             }
 
-
-    type HalClientFactory(headers : Parameter list) = 
+    type HalClientFactory private (headers : Parameter list) = 
         new() = HalClientFactory([])
         
         member x.CreateHalClient(domain:string) : HalClient = 

@@ -10,6 +10,7 @@ type Resource internal (inner:Client.Resource) =
     member this.Parse<'T>() = 
         inner.Parse<'T>()
     member this.Response = inner.response
+    member this.Data = inner.data
 and
     RequestContext internal (inner:Client.RequestContext) = 
 
