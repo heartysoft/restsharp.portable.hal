@@ -69,7 +69,7 @@ namespace RestSharp.Portable.CSharpTests
         public void should_allow_url_segment_state()
         {
             var resource = _client.From("/api/cardholders")
-                .UrlSegments(new{id="123"})
+                .UrlSegments(new { id = "123" })
                 .Follow("cardHolder")
                 .GetAsync<CardHolderDetails>().Result;
 
@@ -78,5 +78,58 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual("again", resource.AnotherCard.IdAgain);
         }
 
+
+        [Test]
+        public void provided_url_segment_should_take_precedence()
+        {
+            var resource = _client.From("/api/cardholders")
+                .UrlSegments(new { id = "123" })
+                .Follow("cardHolder", new{id="112"})
+                .GetAsync<CardHolderDetails>().Result;
+
+            Assert.AreEqual(112, resource.Id);
+            Assert.AreEqual("Customer Number112", resource.Name);
+            Assert.AreEqual("again", resource.AnotherCard.IdAgain);
+        }
+
+        [Test]
+        public void should_follow_multiple_rels_in_one_go()
+        {
+            var resource = _client.From("/api/cardholders")
+                .UrlSegments(new { id = "112" })
+                // ReSharper disable once PossiblyMistakenUseOfParamsMethod
+                .Follow("cardHolder", "card")
+                .GetAsync<CardEmbedded>().Result;
+
+            Assert.AreEqual("101", resource.Number);
+            Assert.AreEqual("mastercard", resource.Type);
+        }
+
+        [Test]
+        public void should_get_embedded_resource()
+        {
+            var resource = _client.From("/api/cardholders")
+                // ReSharper disable once PossiblyMistakenUseOfParamsMethod
+                .Follow("cardHolder", new{id=112})
+                .Follow("card")
+                .GetAsync<CardEmbedded>().Result;
+
+            Assert.AreEqual("101", resource.Number);
+            Assert.AreEqual("mastercard", resource.Type);
+        }
+
+        [Test]
+        public void should_follow_link_in_embedded_resource()
+        {
+            var resource = _client.From("/api/cardholders")
+                .Follow("cardHolder", new { id = 112 })
+                .Follow("card")
+                .Follow("loadCard")
+                .GetAsync<LoadCardForm>()
+                .Result;
+
+            Assert.AreEqual(100M, resource.Amount);
+            Assert.AreEqual("GBP", resource.Currency);
+        }
     }
 }

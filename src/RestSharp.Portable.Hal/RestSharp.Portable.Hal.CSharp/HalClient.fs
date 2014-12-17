@@ -4,6 +4,7 @@ open RestSharp.Portable.Hal
 open System.Collections.Generic
 open System.Threading.Tasks
 open System.Reflection
+open System
 
 type Resource internal (inner:Client.Resource) = 
     member this.Parse<'T>() = 
@@ -26,13 +27,15 @@ and
     member this.GetAsync<'T> () = 
         inner.GetAsync<'T>() |> Async.StartAsTask
 
-    member this.Follow (rel:string) = 
-        RequestContext(inner.Follow rel)
-
     member this.UrlSegments (segments:System.Object) = 
         let properties = getAnonymousValues segments
         RequestContext (inner.UrlSegments(properties))
     
+    member this.Follow (rel:string) = 
+        RequestContext(inner.Follow rel)
+
+    member this.Follow ([<ParamArray>] rels: string array) = 
+        RequestContext (inner.Follow(List.ofArray rels))
     member this.Follow (rel:string, segments:System.Object) = 
         let properties = getAnonymousValues segments
         RequestContext (inner.Follow(rel, properties))

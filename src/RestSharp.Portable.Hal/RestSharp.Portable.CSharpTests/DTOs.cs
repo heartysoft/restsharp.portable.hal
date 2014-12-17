@@ -23,4 +23,16 @@ namespace RestSharp.Portable.CSharpTests
         public string Name { get; set; }
         public Card AnotherCard { get; set; }
     }
+
+    public class LoadCardForm
+    {
+        public decimal Amount { get; set; }
+        public string Currency { get; set; }
+    }
+
+    public class CardEmbedded
+    {
+        public string Number { get; set; }
+        public string Type { get; set; }
+    }
 }
