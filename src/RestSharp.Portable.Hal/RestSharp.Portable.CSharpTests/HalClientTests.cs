@@ -149,5 +149,22 @@ namespace RestSharp.Portable.CSharpTests
             var location = resource.Response.Headers.GetValues("Location").First();
             Assert.AreEqual("/api/CardHolders/55", location);
         }
+
+        [Test]
+        public void should_post_form_to_server_and_parse_body_if_you_want()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var resource =
+                _client.From("/api/cardholders")
+                    .Follow("register")
+                    .PostAsync(newData)
+                    .Result;
+
+            var body = resource.Parse<CardHolderDetails>();
+
+            Assert.AreEqual("Johny", body.Name);
+            Assert.AreEqual("lala", body.AnotherCard.IdAgain);
+        }
+
     }
 }
