@@ -5,6 +5,7 @@ open System.Collections.Generic
 open System.Threading.Tasks
 open System.Reflection
 open System
+open System.Net.Http
 
 type Resource internal (inner:Client.Resource) = 
     member this.Parse<'T>() = 
@@ -28,15 +29,27 @@ and
     member this.GetAsync<'T> () = 
         inner.GetAsync<'T>() |> Async.StartAsTask
 
-    member this.PostAsync data = 
+    member private this.submitAsync (``method``:string) data = 
         let work = async{
-            let! res = inner.PostAsync data
+            let handler = 
+                match ``method`` with
+                | "POST" -> inner.PostAsync
+                | "PUT" -> inner.PutAsync
+                | "DELETE" -> inner.DeleteAsync
+                | _ -> failwith(System.String.Format("unsupport method {0}", ``method``))
+
+            let! res = handler data
             return Resource(res)
         }
         work |> Async.StartAsTask
+    
+    member this.PostAsync data = this.submitAsync "POST" data
+    member this.PutAsync data = this.submitAsync "PUT" data
+    member this.DeleteAsync data = this.submitAsync "DELETE" data
 
-    member this.PostAsyncAndParse<'T> data = 
-        inner.PostAsyncAndParse<'T> data |> Async.StartAsTask
+    member this.PostAsyncAndParse<'T> data = inner.PostAsyncAndParse<'T> data |> Async.StartAsTask
+    member this.PutAsyncAndParse<'T> data =  inner.PutAsyncAndParse<'T> data |> Async.StartAsTask
+    member this.DeleteAsyncAndParse<'T> data = inner.DeleteAsyncAndParse<'T> data |> Async.StartAsTask
 
     member this.UrlSegments (segments:System.Object) = 
         let properties = getAnonymousValues segments
