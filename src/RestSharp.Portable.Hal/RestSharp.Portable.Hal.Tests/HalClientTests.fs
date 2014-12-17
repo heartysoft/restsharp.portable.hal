@@ -63,7 +63,7 @@ type HalTests() =
     member test.``should follow templated link`` () = 
         let resource = 
             client.From("api/cardholders")
-                .Follow("cardHolder", ["id" => "123"])
+                .Follow("cardholder", ["id" => "123"])
                 .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
         
         let expected = {
@@ -79,7 +79,7 @@ type HalTests() =
         let resource = 
             client.From("api/cardholders")
                 .UrlSegments(["id" => "123"])
-                .Follow("cardHolder")
+                .Follow("cardholder")
                 .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
         
         let expected = {
@@ -95,7 +95,7 @@ type HalTests() =
         let resource = 
             client.From("api/cardholders")
                 .UrlSegments(["id" => "123"])
-                .Follow("cardHolder", ["id" => "112"])
+                .Follow("cardholder", ["id" => "112"])
                 .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
         
         let expected = {
@@ -110,7 +110,7 @@ type HalTests() =
     member test.``json nuances`` () = 
         let resource = 
             client.From("api/cardholders")
-                .Follow("cardHolder", ["id" => "112"])
+                .Follow("cardholder", ["id" => "112"])
                 .GetAsync()
                 |> Async.RunSynchronously
         
@@ -143,7 +143,7 @@ type HalTests() =
         let resource = 
             client.From("api/cardholders")
                 .UrlSegments(["id" => "112"])
-                .Follow(["cardHolder"; "card"])
+                .Follow(["cardholder"; "card"])
                 .GetAsync<CardEmbedded>() |> Async.RunSynchronously
         
         let expected = { CardEmbedded.number = 101; ``type``="mastercard" }
@@ -154,7 +154,7 @@ type HalTests() =
     member test.``should get embedded resource`` () = 
         let resource = 
             client.From("api/cardholders")
-                .Follow("cardHolder", ["id" => "112"])
+                .Follow("cardholder", ["id" => "112"])
                 .Follow("card")
                 .GetAsync<CardEmbedded>() |> Async.RunSynchronously
         
@@ -166,9 +166,9 @@ type HalTests() =
     member test.``should follow link in embedded resource`` () = 
         let resource = 
             client.From("api/cardholders")
-                .Follow("cardHolder", ["id" => "112"])
+                .Follow("cardholder", ["id" => "112"])
                 .Follow("card")
-                .Follow("loadCard")
+                .Follow("loadcard")
                 .GetAsync<LoadCardForm>() |> Async.RunSynchronously
         
         let expected = { LoadCardForm.amount = 100M; currency="GBP" }
@@ -200,7 +200,7 @@ type HalTests() =
         let ignored = Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
         
         let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-        Assert.AreEqual("/api/CardHolders/55", locationHeader)
+        Assert.AreEqual("/api/cardholders/55", locationHeader)
 
     [<Test>]
     member test.``should post form to server and parse body (if you want)`` () = 
@@ -238,7 +238,7 @@ type HalTests() =
         Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
 
         let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-        Assert.AreEqual("/api/CardHolders/55", locationHeader)
+        Assert.AreEqual("/api/cardholders/55", locationHeader)
 
     [<Test>]
     member test.``should delete to server`` () =

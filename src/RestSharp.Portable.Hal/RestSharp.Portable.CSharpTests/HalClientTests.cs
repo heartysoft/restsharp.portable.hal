@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using RestSharp.Portable.Hal.CSharp;
 
 namespace RestSharp.Portable.CSharpTests
@@ -59,7 +54,7 @@ namespace RestSharp.Portable.CSharpTests
         public void should_follow_templated_link()
         {
             var resource = _client.From("api/cardholders")
-                .Follow("cardHolder", new { id = "123" })
+                .Follow("cardholder", new { id = "123" })
                 .GetAsync<CardHolderDetails>().Result;
 
             Assert.AreEqual(123, resource.Id);
@@ -72,7 +67,7 @@ namespace RestSharp.Portable.CSharpTests
         {
             var resource = _client.From("/api/cardholders")
                 .UrlSegments(new { id = "123" })
-                .Follow("cardHolder")
+                .Follow("cardholder")
                 .GetAsync<CardHolderDetails>().Result;
 
             Assert.AreEqual(123, resource.Id);
@@ -86,7 +81,7 @@ namespace RestSharp.Portable.CSharpTests
         {
             var resource = _client.From("/api/cardholders")
                 .UrlSegments(new { id = "123" })
-                .Follow("cardHolder", new{id="112"})
+                .Follow("cardholder", new{id="112"})
                 .GetAsync<CardHolderDetails>().Result;
 
             Assert.AreEqual(112, resource.Id);
@@ -100,7 +95,7 @@ namespace RestSharp.Portable.CSharpTests
             var resource = _client.From("/api/cardholders")
                 .UrlSegments(new { id = "112" })
                 // ReSharper disable once PossiblyMistakenUseOfParamsMethod
-                .Follow("cardHolder", "card")
+                .Follow("cardholder", "card")
                 .GetAsync<CardEmbedded>().Result;
 
             Assert.AreEqual("101", resource.Number);
@@ -112,7 +107,7 @@ namespace RestSharp.Portable.CSharpTests
         {
             var resource = _client.From("/api/cardholders")
                 // ReSharper disable once PossiblyMistakenUseOfParamsMethod
-                .Follow("cardHolder", new{id=112})
+                .Follow("cardholder", new{id=112})
                 .Follow("card")
                 .GetAsync<CardEmbedded>().Result;
 
@@ -124,9 +119,9 @@ namespace RestSharp.Portable.CSharpTests
         public void should_follow_link_in_embedded_resource()
         {
             var resource = _client.From("/api/cardholders")
-                .Follow("cardHolder", new { id = 112 })
+                .Follow("cardholder", new { id = 112 })
                 .Follow("card")
-                .Follow("loadCard")
+                .Follow("loadcard")
                 .GetAsync<LoadCardForm>()
                 .Result;
 
@@ -147,7 +142,7 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual(HttpStatusCode.Created, resource.Response.StatusCode);
 
             var location = resource.Response.Headers.GetValues("Location").First();
-            Assert.AreEqual("/api/CardHolders/55", location);
+            Assert.AreEqual("/api/cardholders/55", location);
         }
 
         [Test]
@@ -193,7 +188,7 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual(HttpStatusCode.Created, resource.Response.StatusCode);
 
             var location = resource.Response.Headers.GetValues("Location").First();
-            Assert.AreEqual("/api/CardHolders/55", location);
+            Assert.AreEqual("/api/cardholders/55", location);
         }
 
         [Test]

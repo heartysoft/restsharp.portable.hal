@@ -6,13 +6,13 @@ namespace Hal.Models
     {
         public static class CardHolders
         {
-            public static Link AllCardHolders { get { return new Link("allCardHolders", "/api/cardholders"); } }
-            public static Link CardHolder { get { return new Link("cardHolder", "/api/cardholders/{id}"); } }
+            public static Link AllCardHolders { get { return new Link("cardholders", "/api/cardholders"); } }
+            public static Link CardHolder { get { return new Link("cardholder", "/api/cardholders/{id}"); } }
         }
 
         public static class UpdateCardHolder
         {
-            public static Link Update { get { return new Link("updateCardHolder", "/api/updatecardholder");} }
+            public static Link Update { get { return new Link("updatecardholder", "/api/updatecardholder");} }
         }
 
         public static class RegisterCardHolder
@@ -27,7 +27,7 @@ namespace Hal.Models
 
         public static class LoadCards
         {
-            public static Link LoadCard { get { return new Link("loadCard", "/api/loadCard"); } }
+            public static Link LoadCard { get { return new Link("loadcard", "/api/loadCard"); } }
         }
     }
 }
