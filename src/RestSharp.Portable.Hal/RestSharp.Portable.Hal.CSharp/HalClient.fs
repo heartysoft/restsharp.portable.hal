@@ -79,7 +79,12 @@ type HalClientFactory private (inner: Client.HalClientFactory) =
     member this.Accept x = 
         inner.Accept x
         |> fun c -> HalClientFactory(c)
+    
+    member this.HttpClientFactory httpClientFactory = 
+        inner.HttpClientFactory(httpClientFactory)
+        |> fun c -> HalClientFactory(c)
 
     member this.CreateHalClient domain = 
         inner.CreateHalClient domain
         |> fun c -> HalClient(c)
+

@@ -6,7 +6,6 @@ open Newtonsoft.Json.Linq
 open System.Net
 
 
-
 let rootUrl = "http://localhost:62582/"
 let clientFactory = 
             HalClientFactory()

@@ -4,7 +4,7 @@ open Newtonsoft.Json.Linq
 
 [<AutoOpen>]
 module Client =
-  
+
     let inline (=>) (left:string) (right) =
         (left, right.ToString())
 
@@ -25,7 +25,7 @@ module Client =
     and 
         RequestParameters = { rootUrl : string; follow: Follow list; urlSegments : Parameter list }
     and
-        EnvironmentParameters = { domain : string; headers : Parameter list }
+        EnvironmentParameters = { domain : string; headers : Parameter list; httpClientFactory : IHttpClientFactory option }
     
     type Resource  = 
         { requestContext : RequestContext; response : IRestResponse; data: JObject}
@@ -68,6 +68,11 @@ module Client =
         member private this.getResponse () : Async<Resource> = 
             async {
                 let client = RestClient(this.environment.domain)
+                
+                match this.environment.httpClientFactory with
+                | Some f -> client.HttpClientFactory <- f
+                | _ -> ()
+
                 let restRequest = RestRequest(this.requestParameters.rootUrl) :> IRestRequest
                 
                 let parameters = this.environment.headers @ this.requestParameters.urlSegments
@@ -205,22 +210,30 @@ module Client =
                 requestParameters = {rootUrl = apiRelativeRoot; follow = []; urlSegments = []}
             }
 
-    type HalClientFactory private (headers : Parameter list) = 
-        new() = HalClientFactory([])
+    type HalClientFactory private (headers : Parameter list, httpClientFactory:IHttpClientFactory option) = 
+        new() = HalClientFactory([], None)
         
         member x.CreateHalClient(domain:string) : HalClient = 
-            HalClient({EnvironmentParameters.domain = domain; headers = headers})
+            HalClient({EnvironmentParameters.domain = domain; headers = headers; httpClientFactory = httpClientFactory})
 
-        member x.Header (key:string) (value:string) : HalClientFactory= 
+        member x.HttpClientFactory httpClientFactory = 
+            HalClientFactory(headers, httpClientFactory)
+
+        member x.Header (key:string) (value:string) : HalClientFactory = 
             let p = new Parameter()
             p.Name <- key
             p.Value <- value
             p.Type <- ParameterType.HttpHeader
 
-            HalClientFactory(p :: headers)
+            HalClientFactory(p :: headers, httpClientFactory)
 
         member x.Accept(headerValue:string) = 
             x.Header "Accept" headerValue
+
+
+
+
+
 
    
 
