@@ -189,7 +189,7 @@ type HalTests() =
         Assert.IsNull(merged.["_embedded"])
 
     [<Test>]
-    member test.``should Post form to server`` () = 
+    member test.``should post form to server`` () = 
         let newData = {RegistrationForm.id = 55; name="Johny"}
         let resource = 
             client.From("api/cardholders")
@@ -205,7 +205,7 @@ type HalTests() =
         Assert.AreEqual("/api/CardHolders/55", locationHeader)
 
     [<Test>]
-    member test.``should Post form to server and parse body (if you want)`` () = 
+    member test.``should post form to server and parse body (if you want)`` () = 
         let newData = {RegistrationForm.id = 55; name="Johny"}
         let resource = 
             client.From("api/cardholders")
@@ -218,7 +218,7 @@ type HalTests() =
         Assert.AreEqual("lala", body.anotherCard.idAgain)
 
     [<Test>]
-    member test.``should Post form to sever and parse body nicely (if you want)`` () = 
+    member test.``should post form to sever and parse body nicely (if you want)`` () = 
         let newData = {RegistrationForm.id = 55; name="Johny"}
         let resource = 
             client.From("api/cardholders")

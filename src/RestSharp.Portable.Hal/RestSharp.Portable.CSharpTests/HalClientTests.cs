@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using RestSharp.Portable.Hal.CSharp;
 
 namespace RestSharp.Portable.CSharpTests
@@ -130,6 +132,22 @@ namespace RestSharp.Portable.CSharpTests
 
             Assert.AreEqual(100M, resource.Amount);
             Assert.AreEqual("GBP", resource.Currency);
+        }
+
+        [Test]
+        public void should_post_form_to_server()
+        {
+            var newData = new RegistrationForm {Id = 55, Name = "Johny"};
+            var resource =
+                _client.From("/api/cardholders")
+                    .Follow("register")
+                    .PostAsync(newData)
+                    .Result;
+
+            Assert.AreEqual(HttpStatusCode.Created, resource.Response.StatusCode);
+
+            var location = resource.Response.Headers.GetValues("Location").First();
+            Assert.AreEqual("/api/CardHolders/55", location);
         }
     }
 }

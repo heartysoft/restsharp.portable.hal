@@ -9,6 +9,7 @@ open System
 type Resource internal (inner:Client.Resource) = 
     member this.Parse<'T>() = 
         inner.Parse<'T>()
+    member this.Response = inner.response
 and
     RequestContext internal (inner:Client.RequestContext) = 
 
@@ -26,6 +27,14 @@ and
     
     member this.GetAsync<'T> () = 
         inner.GetAsync<'T>() |> Async.StartAsTask
+
+    member this.PostAsync data = 
+        let work = async{
+            let! res = inner.PostAsync data
+            return Resource(res)
+        }
+        work |> Async.StartAsTask
+        
 
     member this.UrlSegments (segments:System.Object) = 
         let properties = getAnonymousValues segments
