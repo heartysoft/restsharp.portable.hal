@@ -5,7 +5,6 @@ open System.Collections.Generic
 open System.Threading.Tasks
 open System.Reflection
 open System
-open System.Net.Http
 
 type Resource internal (inner:Client.Resource) = 
     member this.Parse<'T>() = 
