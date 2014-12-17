@@ -10,7 +10,12 @@ type Resource internal (inner:Client.Resource) =
         inner.Parse<'T>()
 and
     RequestContext internal (inner:Client.RequestContext) = 
-    
+
+    let getAnonymousValues (obj:System.Object) = 
+            obj.GetType().GetRuntimeProperties()
+            |> Seq.map (fun o -> o.Name => o.GetValue(obj))
+            |> List.ofSeq
+
     member this.GetAsync () = 
         let work = async {
             let! result = inner.GetAsync()
@@ -23,12 +28,13 @@ and
 
     member this.Follow (rel:string) = 
         RequestContext(inner.Follow rel)
+
+    member this.UrlSegments (segments:System.Object) = 
+        let properties = getAnonymousValues segments
+        RequestContext (inner.UrlSegments(properties))
     
     member this.Follow (rel:string, segments:System.Object) = 
-        let properties = 
-            segments.GetType().GetRuntimeProperties()
-            |> Seq.map (fun o -> o.Name => o.GetValue(segments))
-            |> List.ofSeq
+        let properties = getAnonymousValues segments
         RequestContext (inner.Follow(rel, properties))
 
 type HalClient internal (inner:Client.HalClient) = 

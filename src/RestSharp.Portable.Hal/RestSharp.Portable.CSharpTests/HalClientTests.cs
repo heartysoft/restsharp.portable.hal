@@ -65,6 +65,18 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual("again", resource.AnotherCard.IdAgain);
         }
 
+        [Test]
+        public void should_allow_url_segment_state()
+        {
+            var resource = _client.From("/api/cardholders")
+                .UrlSegments(new{id="123"})
+                .Follow("cardHolder")
+                .GetAsync<CardHolderDetails>().Result;
+
+            Assert.AreEqual(123, resource.Id);
+            Assert.AreEqual("Customer Number123", resource.Name);
+            Assert.AreEqual("again", resource.AnotherCard.IdAgain);
+        }
 
     }
 }
