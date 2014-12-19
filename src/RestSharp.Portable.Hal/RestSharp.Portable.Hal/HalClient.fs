@@ -32,6 +32,9 @@ module Client =
         { requestContext : RequestContext; response : IRestResponse; data: JObject}
         member this.Parse<'T>() = 
             this.data.ToObject<'T>()
+
+        member this.FollowHeader (header:string) : RequestContext =
+            header |> this.requestContext.FollowHeader
        
         member this.Follow (next:Follow) rest : RequestContext = 
             let (nextUrl, nextUrlSegments) = 

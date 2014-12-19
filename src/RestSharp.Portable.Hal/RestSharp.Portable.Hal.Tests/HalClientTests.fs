@@ -250,19 +250,21 @@ type HalTests() =
         let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
         Assert.AreEqual("/api/cardholders", locationHeader)       
 
-//    [<Test>]
-//    member test.``should follow location header`` () =
-//        let newData = {RegistrationForm.id = 55; name="Johny"}
-//        let resource = 
-//            client.From("api/cardholders")
-//                .Follow("register")
-//                .PostAsync(newData)
-//                .FollowHeader("Location")
-//                .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
-//        
-//        
-//        let ignored = Assert.AreEqual("Johny", resource.name)
-//        Assert.AreEqual("lala", resource.anotherCard.idAgain)
+    [<Test>]
+    member test.``should follow location header`` () =
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("register")
+                .PostAsync(newData) |> Async.RunSynchronously                            
+
+        let nr = 
+            resource.FollowHeader("Location")
+                .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
+        
+        
+        let ignored = Assert.AreEqual("Johny", nr)
+        Assert.AreEqual("lala", nr.id)
 
 
     
