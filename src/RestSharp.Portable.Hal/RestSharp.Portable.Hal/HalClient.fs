@@ -20,10 +20,11 @@ module Client =
 
         newJo
 
-    type Follow = 
-        {rel:string; urlSegments:Parameter list}
+    type Follow =
+        | LinkFollow of string * Parameter list
+        | HeaderFollow of string
     and 
-        RequestParameters = { rootUrl : string; follow: Follow list; urlSegments : Parameter list }
+        RequestParameters = { rootUrl : string; follow: Follow list; urlSegments : Parameter list; }
     and
         EnvironmentParameters = { domain : string; headers : Parameter list; httpClientFactory : IHttpClientFactory option }
     
@@ -31,16 +32,18 @@ module Client =
         { requestContext : RequestContext; response : IRestResponse; data: JObject}
         member this.Parse<'T>() = 
             this.data.ToObject<'T>()
-        
+       
         member this.Follow (next:Follow) rest : RequestContext = 
-            let nextUrl = this.data.["_links"].[next.rel].Value<string>("href") 
-            let nextUrlSegments = next.urlSegments
+            let (nextUrl, nextUrlSegments) = 
+                match next with
+                | LinkFollow(rel, segments) -> this.data.["_links"].[rel].Value<string>("href") , segments
+                | HeaderFollow(header) -> (this.response.Headers.GetValues(header) |> Seq.head, [])
 
             let newRequestParameters = 
                 {
                     this.requestContext.requestParameters 
                         with rootUrl = nextUrl;                          
-                         urlSegments = this.requestContext.requestParameters.urlSegments @ next.urlSegments;
+                         urlSegments = this.requestContext.requestParameters.urlSegments @ nextUrlSegments;
                          follow = rest 
                 }
 
@@ -87,17 +90,20 @@ module Client =
                 return { Resource.requestContext = this; response = res; data=data}
             } 
 
-        static member private getEmbeddedResource (data:JObject) (rel:string) : Option<JToken> = 
-            let embedded = data.["_embedded"]
-            if embedded = null then
-                None
-            else if embedded.Type = Newtonsoft.Json.Linq.JTokenType.Null then None
-                 else
-                    let target = embedded.[rel]
-                    if target = null then
-                        None
-                    else if target.Type = Newtonsoft.Json.Linq.JTokenType.Null then None
-                        else Some target
+        static member private getEmbeddedResource (data:JObject) (follow:Follow) : Option<JToken> = 
+            match follow with
+            | HeaderFollow(_) -> None
+            | LinkFollow(rel, segments) ->
+                let embedded = data.["_embedded"]
+                if embedded = null then
+                    None
+                else if embedded.Type = Newtonsoft.Json.Linq.JTokenType.Null then None
+                     else
+                        let target = embedded.[rel]
+                        if target = null then
+                            None
+                        else if target.Type = Newtonsoft.Json.Linq.JTokenType.Null then None
+                            else Some target
                 
         member private this.getNext (resource:Resource) : Async<Resource> = 
             async {
@@ -105,7 +111,7 @@ module Client =
                     match resource.requestContext.requestParameters.follow with
                     | [] -> resource
                     | x :: xs -> 
-                        let embedded = RequestContext.getEmbeddedResource resource.data x.rel
+                        let embedded = RequestContext.getEmbeddedResource resource.data x
                         match embedded with
                         | None -> 
                             let newRequest : RequestContext = resource.Follow x xs
@@ -186,7 +192,7 @@ module Client =
             let rp = this.requestParameters
             let segments = this.getUrlSegments urlSegments
 
-            let newRp = {rp with follow = rp.follow @ [{rel=rel; urlSegments=segments}]}
+            let newRp = {rp with follow = rp.follow @ [LinkFollow(rel, segments)]}
             {this with requestParameters = newRp}
         
         member this.Follow (rel:string) : RequestContext =
@@ -196,6 +202,13 @@ module Client =
             match rels with
             | [] -> this
             | x::xs -> this.Follow(x).Follow(xs)
+
+        member this.FollowHeader (headerName:string) : RequestContext =
+            let rp = this.requestParameters
+            let newRp = {rp with follow = rp.follow @ [HeaderFollow(headerName)]}
+            {this with requestParameters = newRp}
+
+        member this.FollowLocation () = this.FollowHeader "Location"
 
         member this.UrlSegments (urlSegments: (string*string) list) : RequestContext = 
            let rp = this.requestParameters
@@ -207,7 +220,7 @@ module Client =
         member this.From (apiRelativeRoot:string) : RequestContext = 
             {
                 RequestContext.environment = env;
-                requestParameters = {rootUrl = apiRelativeRoot; follow = []; urlSegments = []}
+                requestParameters = {rootUrl = apiRelativeRoot; follow = []; urlSegments = []; }
             }
 
     type HalClientFactory private (headers : Parameter list, httpClientFactory:IHttpClientFactory option) = 
