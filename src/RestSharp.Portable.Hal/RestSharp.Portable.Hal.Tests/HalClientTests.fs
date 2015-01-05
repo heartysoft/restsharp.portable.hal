@@ -18,6 +18,11 @@ type RegistrationForm = {
         name:string
     }
 
+type UpdateCardHolderForm = {
+        id:int;
+        name:string
+    }
+
 type Card = {idAgain:string}
 
 type CardHolderDetails = {
@@ -256,16 +261,30 @@ type HalTests() =
         let resource = 
             client.From("api/cardholders")
                 .Follow("register")
-                .PostAsync(newData) |> Async.RunSynchronously                            
+                .PostAsync(newData) |> Async.RunSynchronously                              
 
         let nr = 
             resource.FollowHeader("Location")
                 .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
         
         
-        let ignored = Assert.AreEqual("Johny", nr)
-        Assert.AreEqual("lala", nr.id)
+        let ignored = Assert.AreEqual("Customer Number55", nr.name) //irl would be Johny but server does not persist
+        Assert.AreEqual("again", nr.anotherCard.idAgain)
 
+    [<Test>]
+    member test.``should follow location header and continue traversal`` () =
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource = 
+            client.From("api/cardholders")
+                .Follow("register")
+                .PostAsync(newData) |> Async.RunSynchronously                              
+
+        let nr = 
+            resource.FollowHeader("Location")
+                .Follow("updatecardholder")
+                .GetAsync<UpdateCardHolderForm>() |> Async.RunSynchronously
+
+        Assert.AreEqual(0, nr.id)
 
     
     

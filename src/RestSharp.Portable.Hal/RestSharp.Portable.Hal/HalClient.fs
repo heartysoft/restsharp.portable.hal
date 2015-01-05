@@ -28,19 +28,21 @@ module Client =
     and
         EnvironmentParameters = { domain : string; headers : Parameter list; httpClientFactory : IHttpClientFactory option }
     
-    type Resource  = 
+    type Resource = 
         { requestContext : RequestContext; response : IRestResponse; data: JObject}
         member this.Parse<'T>() = 
             this.data.ToObject<'T>()
 
+        member this.FollowLocation () = this.FollowHeader "Location"
+
         member this.FollowHeader (header:string) : RequestContext =
-            header |> this.requestContext.FollowHeader
+            this.response.Headers.GetValues(header) |> Seq.head |> this.requestContext.FollowHeader
        
         member this.Follow (next:Follow) rest : RequestContext = 
             let (nextUrl, nextUrlSegments) = 
                 match next with
                 | LinkFollow(rel, segments) -> this.data.["_links"].[rel].Value<string>("href") , segments
-                | HeaderFollow(header) -> (this.response.Headers.GetValues(header) |> Seq.head, [])
+                | HeaderFollow(header) -> header, []
 
             let newRequestParameters = 
                 {
@@ -206,12 +208,12 @@ module Client =
             | [] -> this
             | x::xs -> this.Follow(x).Follow(xs)
 
-        member this.FollowHeader (headerName:string) : RequestContext =
+        member this.FollowHeader (headerPath:string) : RequestContext =
             let rp = this.requestParameters
-            let newRp = {rp with follow = rp.follow @ [HeaderFollow(headerName)]}
+            let newRp = {rp with follow = rp.follow @ [HeaderFollow(headerPath)]}
             {this with requestParameters = newRp}
 
-        member this.FollowLocation () = this.FollowHeader "Location"
+        
 
         member this.UrlSegments (urlSegments: (string*string) list) : RequestContext = 
            let rp = this.requestParameters
