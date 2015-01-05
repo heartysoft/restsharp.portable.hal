@@ -212,7 +212,6 @@ module Client =
             let rp = this.requestParameters
             let newRp = {rp with follow = rp.follow @ [HeaderFollow(headerPath)]}
             {this with requestParameters = newRp}
-
         
 
         member this.UrlSegments (urlSegments: (string*string) list) : RequestContext = 

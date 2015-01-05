@@ -12,6 +12,12 @@ namespace RestSharp.Portable.CSharpTests
         public string Name { get; set; }
     }
 
+    public class UpdateCardHolderForm
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
     public class Card
     {
         public string IdAgain { get; set; }

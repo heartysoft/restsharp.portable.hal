@@ -206,5 +206,39 @@ namespace RestSharp.Portable.CSharpTests
             var location = resource.Response.Headers.GetValues("Location").First();
             Assert.AreEqual("/api/cardholders", location);
         }
+
+        [Test]
+        public void should_follow_location_header()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var resource =
+                _client.From("/api/cardholders")
+                    .Follow("register")
+                    .PostAsync(newData)
+                    .Result;
+
+            var newResource = resource.FollowHeader("Location").GetAsync<CardHolderDetails>().Result;
+
+            Assert.AreEqual("Customer Number55", newResource.Name);
+            Assert.AreEqual("again", newResource.AnotherCard.IdAgain);
+        }
+
+        [Test]
+        public void should_follow_location_header_and_continue_traversal()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var resource =
+                _client.From("/api/cardholders")
+                    .Follow("register")
+                    .PostAsync(newData)
+                    .Result;
+
+            var newResource = resource.FollowHeader("Location")
+                .Follow("updatecardholder")
+                .GetAsync<UpdateCardHolderForm>()
+                .Result;
+
+            Assert.AreEqual(0, newResource.Id);
+        }
     }
 }
