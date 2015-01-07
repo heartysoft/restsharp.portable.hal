@@ -103,7 +103,7 @@
     </Target>
 
     <Target Name="BuildPackage" DependsOnTargets="CheckPrerequisites">
-        <Exec Command="$(BuildCommand)"
+      <Exec Command="$(BuildCommand)"
               Condition=" '$(OS)' != 'Windows_NT' " />
 
         <Exec Command="$(BuildCommand)"

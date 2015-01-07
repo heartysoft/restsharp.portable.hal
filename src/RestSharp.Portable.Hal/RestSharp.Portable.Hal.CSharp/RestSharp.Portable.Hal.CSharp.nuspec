@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>HAL Client CSharp</title>
+    <authors>Moneycorp</authors>
+    <owners>Moneycorp</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>HAL Client</description>
+    <copyright>Copyright 2014</copyright>
+    <dependencies>
+      <dependency id="RestSharp.Portable.Hal"/>
+    </dependencies>
+  </metadata>
+
+</package>
