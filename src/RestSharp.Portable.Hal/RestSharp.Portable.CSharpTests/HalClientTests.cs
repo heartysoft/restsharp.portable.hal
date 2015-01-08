@@ -1,7 +1,10 @@
 ﻿using System.Linq;
 using System.Net;
+using System.Net.Http;
+using CacheCow.Client;
 using NUnit.Framework;
 using RestSharp.Portable.Hal.CSharp;
+using RestSharp.Portable.HttpClientImpl;
 
 namespace RestSharp.Portable.CSharpTests
 {
@@ -15,7 +18,7 @@ namespace RestSharp.Portable.CSharpTests
         {
             var clientFactory = new HalClientFactory()
                  .Accept("application/hal+json");
-            _client = clientFactory.CreateHalClient("http://localhost:62582/");
+            _client = clientFactory.CreateHalClient("http://c2383:62582/");
         }
 
         [Test]
@@ -239,6 +242,49 @@ namespace RestSharp.Portable.CSharpTests
                 .Result;
 
             Assert.AreEqual(0, newResource.Id);
+        }
+
+        [Test]
+        public void can_pass_in_custom_httpClientFactory()
+        {
+            var clientFactory = new HalClientFactory().HttpClientFactory(new TestClientFactory())
+                .Accept("application/hal+json");
+
+            _client = clientFactory.CreateHalClient("http://localhost:62582/");
+
+            Assert.IsNotNull(_client);
+        }
+
+        [Test]
+        public void response_is_cached_when_using_cacheCow()
+        {
+            var clientFactory = new HalClientFactory().HttpClientFactory(new CacheCowHttpClientFactory())
+                .Accept("application/hal+json");
+
+            _client = clientFactory.CreateHalClient("http://c2383:62582/");
+
+            var response = _client.From("api/cardholders").GetAsync().Result;
+            var response2 = _client.From("api/cardholders").GetAsync().Result;
+        }
+    }
+
+    public class TestClientFactory : DefaultHttpClientFactory
+    {
+        
+    }
+
+    public class CacheCowHttpClientFactory : DefaultHttpClientFactory
+    {
+        public override HttpClient CreateClient(IRestClient client, IRestRequest request)
+        {
+            var handler = CreateMessageHandler(client, request);
+
+            var httpClient = new HttpClient(new CachingHandler()
+            {
+                InnerHandler = handler
+            }) { BaseAddress = GetBaseAddress(client) };
+
+            return httpClient;
         }
     }
 }

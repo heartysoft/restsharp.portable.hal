@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http;
+using Hal.Attributes;
 using Hal.Models;
 using WebApi.Hal;
 
@@ -8,6 +9,7 @@ namespace Hal.Controllers
     public class CardHoldersController : ApiController
     {
         // GET api/cardholders/5
+        [CacheClient(Duration = 120)]
         public CardHolderRepresentation Get(int id)
         {
             var rep = new CardHolderRepresentation
@@ -37,6 +39,7 @@ namespace Hal.Controllers
         {
         }
 
+        [CacheClient(Duration = 120)]
         public CardHoldersRepresentation Get()
         {
             var cardHolders = new CardHoldersRepresentation();
