@@ -108,8 +108,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="WebApi.Hal">
-      <HintPath>..\packages\WebApi.Hal.2.4.0\lib\net45\WebApi.Hal.dll</HintPath>
+    <Reference Include="WebApi.Hal, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WebApi.Hal.2.5.0\lib\net45\WebApi.Hal.dll</HintPath>
     </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>

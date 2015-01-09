@@ -2,13 +2,13 @@
 using System.Web.Http;
 using Hal.Attributes;
 using Hal.Models;
+using Newtonsoft.Json;
 using WebApi.Hal;
 
 namespace Hal.Controllers
 {
     public class CardHoldersController : ApiController
     {
-        // GET api/cardholders/5
         [CacheClient(Duration = 120)]
         public CardHolderRepresentation Get(int id)
         {
@@ -23,18 +23,15 @@ namespace Hal.Controllers
             return rep;
         }
 
-        // POST api/cardholders
         public void Post([FromBody]string value)
         {
             var temp = 123;
         }
 
-        // PUT api/cardholders/5
         public void Put(int id, [FromBody]string value)
         {
         }
 
-        // DELETE api/cardholders/5
         public void Delete(int id)
         {
         }
@@ -72,11 +69,10 @@ namespace Hal.Controllers
         public Card Card { get; set; }
 
         public override string Rel { get { return LinkTemplates.CardHolders.CardHolder.Rel; } }
-        public override string Href { get { return LinkTemplates.CardHolders.CardHolder.CreateLink().Href; } }
+        public override string Href { get { return LinkTemplates.CardHolders.CardHolder.CreateLink(new {id = Id}).Href; } }
 
         protected override void CreateHypermedia()
         {
-            Links.Add(LinkTemplates.CardHolders.CardHolder);
             Links.Add(LinkTemplates.UpdateCardHolder.Update);
         }
     }

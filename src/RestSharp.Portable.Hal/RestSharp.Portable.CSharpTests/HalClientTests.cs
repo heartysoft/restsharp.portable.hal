@@ -265,6 +265,9 @@ namespace RestSharp.Portable.CSharpTests
 
             var response = _client.From("api/cardholders").GetAsync().Result;
             var response2 = _client.From("api/cardholders").GetAsync().Result;
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(response2);
         }
     }
 
