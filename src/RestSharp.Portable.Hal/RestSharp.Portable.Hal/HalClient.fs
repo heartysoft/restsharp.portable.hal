@@ -26,7 +26,7 @@ module Client =
     and 
         RequestParameters = { rootUrl : string; follow: Follow list; urlSegments : Parameter list; }
     and
-        EnvironmentParameters = { domain : string; headers : Parameter list; httpClientFactory : IHttpClientFactory option }
+        EnvironmentParameters = { client : RestClient; headers : Parameter list; httpClientFactory : IHttpClientFactory option }
     
     type Resource = 
         { requestContext : RequestContext; response : IRestResponse; data: JObject}
@@ -75,7 +75,7 @@ module Client =
 
         member private this.getResponse () : Async<Resource> = 
             async {
-                let client = RestClient(this.environment.domain)
+                let client = this.environment.client
                 
                 match this.environment.httpClientFactory with
                 | Some f -> client.HttpClientFactory <- f
@@ -89,8 +89,13 @@ module Client =
                     parameters
                     |> List.fold (fun (state:IRestRequest) p -> state.AddParameter(p)) restRequest 
 
+                //let httpClient = client.HttpClientFactory.CreateClient(client, req) 
+                //let message = client.HttpClientFactory.CreateRequestMessage(client, req)
+                //let! res = httpClient.SendAsync(message) |> Async.AwaitTask
                 let! res = client.Execute(req) |> Async.AwaitTask
+                //let restResponse = new RestResponse(client, req)
                 
+                //let data = JObject.Parse(res.Content.ReadAsStringAsync().Result)
                 let data = this.parse(res)
                 return { Resource.requestContext = this; response = res; data=data}
             } 
@@ -150,7 +155,7 @@ module Client =
                 let merged = merge form data
                 let url = resource.data.["_links"].["self"].Value<string>("href")
 
-                let client = RestClient(resource.requestContext.environment.domain)
+                let client = resource.requestContext.environment.client
                 let restRequest = 
                     RestRequest(url, ``method``)
                         .AddJsonBody(merged) 
@@ -231,7 +236,7 @@ module Client =
         new() = HalClientFactory([], None)
         
         member x.CreateHalClient(domain:string) : HalClient = 
-            HalClient({EnvironmentParameters.domain = domain; headers = headers; httpClientFactory = httpClientFactory})
+            HalClient({EnvironmentParameters.client = new RestClient(domain); headers = headers; httpClientFactory = httpClientFactory})
 
         member x.HttpClientFactory httpClientFactory = 
             HalClientFactory(headers, httpClientFactory)

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Hal.Attributes;
 using Hal.Models;
 using WebApi.Hal;
 
@@ -11,6 +12,7 @@ namespace Hal.Controllers
 {
     public class RegisterCardHolderController : ApiController
     {
+        [CacheClient(Duration = 30)]
         public RegistrationForm Get()
         {
             return new RegistrationForm()  {Id = -1, Name = "Enter name here"};

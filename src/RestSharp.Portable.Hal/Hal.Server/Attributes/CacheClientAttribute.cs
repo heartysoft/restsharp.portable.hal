@@ -17,7 +17,7 @@ namespace Hal.Attributes
             {
                 MaxAge = TimeSpan.FromSeconds(Duration),
                 MustRevalidate = true,
-                Public = true, NoCache = false, SharedMaxAge = TimeSpan.FromSeconds(Duration)
+                Public = true, SharedMaxAge = TimeSpan.FromSeconds(Duration)
             };
         }
     }

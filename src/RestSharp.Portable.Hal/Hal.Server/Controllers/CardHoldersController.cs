@@ -9,7 +9,7 @@ namespace Hal.Controllers
 {
     public class CardHoldersController : ApiController
     {
-        [CacheClient(Duration = 120)]
+        [CacheClient(Duration = 30)]
         public CardHolderRepresentation Get(int id)
         {
             var rep = new CardHolderRepresentation
@@ -36,7 +36,7 @@ namespace Hal.Controllers
         {
         }
 
-        [CacheClient(Duration = 120)]
+        [CacheClient(Duration = 30)]
         public CardHoldersRepresentation Get()
         {
             var cardHolders = new CardHoldersRepresentation();
