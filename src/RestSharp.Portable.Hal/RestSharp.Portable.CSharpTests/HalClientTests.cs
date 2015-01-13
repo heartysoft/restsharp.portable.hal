@@ -332,28 +332,6 @@ namespace RestSharp.Portable.CSharpTests
             Assert.IsNotNull(response2);
             Assert.IsNotNull(response3);
         }
-
-        [Test]
-        public async void cache_cow_will_cache2()
-        {
-            var factory = new CacheCowHttpClientFactory();
-            var restClient = new RestClient("http://c2383:62582");
-            var restRequest = new RestRequest("api/cardholders");
-
-            restRequest.AddHeader("Accept", "appliction/json");
-
-            var client1 = factory.CreateClient(restClient, restRequest);
-
-            var message = factory.CreateRequestMessage(restClient, restRequest);
-            var response1 = await client1.SendAsync(message);
-
-            var client2 = factory.CreateClient(restClient, restRequest);
-            message = factory.CreateRequestMessage(restClient, restRequest);
-            var response2 = await client2.SendAsync(message);
-
-            Assert.IsNotNull(response1);
-            Assert.IsNotNull(response2);
-        }
     }
 
     public class TestClientFactory : DefaultHttpClientFactory

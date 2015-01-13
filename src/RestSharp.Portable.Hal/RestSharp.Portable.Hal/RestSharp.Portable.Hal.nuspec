@@ -9,7 +9,6 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>HAL Client</description>
     <copyright>Copyright 2014</copyright>
-    <dependencies />
   </metadata>
 
 </package>

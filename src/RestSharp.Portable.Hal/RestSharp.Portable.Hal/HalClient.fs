@@ -89,13 +89,8 @@ module Client =
                     parameters
                     |> List.fold (fun (state:IRestRequest) p -> state.AddParameter(p)) restRequest 
 
-                //let httpClient = client.HttpClientFactory.CreateClient(client, req) 
-                //let message = client.HttpClientFactory.CreateRequestMessage(client, req)
-                //let! res = httpClient.SendAsync(message) |> Async.AwaitTask
                 let! res = client.Execute(req) |> Async.AwaitTask
-                //let restResponse = new RestResponse(client, req)
-                
-                //let data = JObject.Parse(res.Content.ReadAsStringAsync().Result)
+
                 let data = this.parse(res)
                 return { Resource.requestContext = this; response = res; data=data}
             } 
