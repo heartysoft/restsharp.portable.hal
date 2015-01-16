@@ -1,21 +1,19 @@
 ﻿using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Threading;
-using CacheCow.Client;
-using CacheCow.Client.FileCacheStore;
-using CacheCow.Common;
-using Newtonsoft.Json;
 using NUnit.Framework;
+using RestSharp.Portable.CSharpTests;
 using RestSharp.Portable.Hal.CSharp;
-using RestSharp.Portable.HttpClientImpl;
 
 namespace RestSharp.Portable.CSharpTests
 {
     [TestFixture]
     public class HalClientTests
     {
+        private HalClient createClient(HalClientFactory clientFactory)
+        {
+            return clientFactory.CreateHalClient(TestConfig.RootUrl);
+        }
+
         private HalClient _client;
 
         [SetUp]
@@ -23,7 +21,7 @@ namespace RestSharp.Portable.CSharpTests
         {
             var clientFactory = new HalClientFactory()
                  .Accept("application/hal+json");
-            _client = clientFactory.CreateHalClient("http://c2383:62582/");
+            _client = createClient(clientFactory);
         }
 
         [Test]
@@ -255,116 +253,11 @@ namespace RestSharp.Portable.CSharpTests
             var clientFactory = new HalClientFactory().HttpClientFactory(new TestClientFactory())
                 .Accept("application/hal+json");
 
-            _client = clientFactory.CreateHalClient("http://localhost:62582/");
+            createClient(clientFactory);
 
             Assert.IsNotNull(_client);
         }
 
-        [Test]
-        public void response_is_cached_when_using_cacheCow()
-        {
-            var clientFactory = new HalClientFactory().HttpClientFactory(new CacheCowHttpClientFactory())
-                .Accept("application/hal+json");
-
-            _client = clientFactory.CreateHalClient("http://c2383:62582/");
-
-            var response = _client.From("api/cardholders").GetAsync().Result;
-            var response2 = _client.From("api/cardholders").GetAsync().Result;
-            var response3 = _client.From("api/cardholders").Follow("register").GetAsync().Result;
-            var response4 = _client.From("api/cardholders").Follow("register").GetAsync().Result;
-
-            Assert.IsNotNull(response);
-            Assert.IsNotNull(response2);
-            Assert.IsNotNull(response3);
-            Assert.IsNotNull(response4);
-        }
-
-        [Test]
-        public void response_is_cached_when_using_cacheCow_with_filestore()
-        {
-            var clientFactory = new HalClientFactory().HttpClientFactory(new CacheCowHttpClientFactory(new FileStore("c:\\Cache")))
-                .Accept("application/hal+json");
-
-            _client = clientFactory.CreateHalClient("http://c2383:62582/");
-
-            var response = _client.From("api/cardholders").GetAsync().Result;
-            var response2 = _client.From("api/cardholders").GetAsync().Result;
-            var response3 = _client.From("api/cardholders").Follow("register").GetAsync().Result;
-            var response4 = _client.From("api/cardholders").Follow("register").GetAsync().Result;
-
-            Assert.IsNotNull(response);
-            Assert.IsNotNull(response2);
-            Assert.IsNotNull(response3);
-            Assert.IsNotNull(response4);
-        }
-
-        [Test]
-        public void cache_cow_will_cache()
-        {
-            var url = "http://c2383:62582/api/cardholders";
-
-            var cacheCowhandler = new CachingHandler(new FileStore("c:\\Cache"));
-            var handler = new HttpClientHandler();
-            var httpClient = HttpClientFactory.Create(handler, cacheCowhandler);
-
-            var msg = new HttpRequestMessage(HttpMethod.Get, url);
-            msg.Headers.Add("Accept", "application/json");
-            var response = httpClient.SendAsync(msg).Result;
-
-            var msg1 = new HttpRequestMessage(HttpMethod.Get, url);
-            msg.Headers.Add("Accept", "application/json");
-            var response1 = httpClient.SendAsync(msg1).Result;
-           
-            var handler2 = new HttpClientHandler();
-            var cacheCowhandler2 = new CachingHandler(new FileStore("c:\\Cache"));
-            var httpClient2 = HttpClientFactory.Create(handler2, cacheCowhandler2);
-
-            var msg2 = new HttpRequestMessage(HttpMethod.Get, url);
-            msg2.Headers.Add("Accept", "application/json");
-            var response2 = httpClient2.SendAsync(msg2).Result;
-
-            var msg3 = new HttpRequestMessage(HttpMethod.Get, url);
-            msg3.Headers.Add("Accept", "application/json");
-            var response3 = httpClient2.SendAsync(msg3).Result;
-
-            Assert.IsNotNull(response);
-            Assert.IsNotNull(response1);
-            Assert.IsNotNull(response2);
-            Assert.IsNotNull(response3);
-        }
-    }
-
-    public class TestClientFactory : DefaultHttpClientFactory
-    {
         
-    }
-
-    public class CacheCowHttpClientFactory : DefaultHttpClientFactory
-    {
-        private readonly CachingHandler _cachingHandler;
-
-        public CacheCowHttpClientFactory(ICacheStore cacheStore) : this(new CachingHandler(cacheStore))
-        {
-        }
-
-        public CacheCowHttpClientFactory() : this(new CachingHandler())
-        {          
-        }
-
-        public CacheCowHttpClientFactory(CachingHandler cachingHandler)
-        {
-            _cachingHandler = cachingHandler;
-            _cachingHandler.DefaultVaryHeaders = new[] { "Accept-Encoding" };           
-        }
-
-        public override HttpClient CreateClient(IRestClient client, IRestRequest request)
-        {
-            var handler = CreateMessageHandler(client, request);
-            var cacheCowhandler = _cachingHandler; 
-            var httpClient = HttpClientFactory.Create(handler, cacheCowhandler);
-            httpClient.BaseAddress = GetBaseAddress(client);
-
-            return httpClient;
-        }
     }
 }
