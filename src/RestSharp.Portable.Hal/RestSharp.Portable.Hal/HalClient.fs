@@ -5,8 +5,8 @@ open Newtonsoft.Json.Linq
 [<AutoOpen>]
 module Client =
 
-    let inline (=>) (left:string) (right) =
-        (left, right.ToString())
+    let (=>) (left:string) (right:System.Object) =
+        (left, System.Convert.ToString(right))
 
     let merge (jo:JObject) data : JObject = 
         let newJo = jo.DeepClone() :?> JObject

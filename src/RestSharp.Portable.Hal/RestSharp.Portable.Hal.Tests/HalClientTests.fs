@@ -4,9 +4,12 @@ open NUnit.Framework
 open RestSharp.Portable.Hal
 open Newtonsoft.Json.Linq
 open System.Net
+open System.Web.Http
 
 
 let rootUrl = "http://localhost:62582/"
+
+
 let clientFactory = 
             HalClientFactory()
                 .Accept("application/hal+json")
@@ -37,6 +40,14 @@ type CardEmbedded = { number:int; ``type``:string }
 
 [<TestFixture>]
 type HalTests() = 
+    [<TestFixtureSetUp>]
+    member test.Setup () = 
+        
+        
+        //let server = new HttpServer()
+//        server.
+        ()
+
     [<Test>]
     member test.``should be able to get resource`` () =
         let resource = client.From("api/cardholders").GetAsync() |> Async.RunSynchronously
@@ -114,6 +125,7 @@ type HalTests() =
     member test.``json nuances`` () = 
         let resource = 
             client.From("api/cardholders")
+                //.Follow("cardholder", [("id", "112")])
                 .Follow("cardholder", ["id" => "112"])
                 .GetAsync()
                 |> Async.RunSynchronously

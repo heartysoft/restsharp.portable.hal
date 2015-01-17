@@ -66,7 +66,7 @@ task version -depends clean {
 
 task compile -depends version {
 	try{
-		exec { msbuild $prod_dir\$solution /t:Clean /t:Build /p:Configuration=$config /v:q /nologo }
+		exec { msbuild $prod_dir\$solution /t:Clean /t:Build /p:Configuration=$config /p:VisualStudioVersion=12.0 /v:q /nologo }
 	} finally{
 		$assemblyInfos = Get-ChildItem -Path $base_dir -Recurse -Filter AssemblyInfo.cs
 		foreach ($assemblyInfo in $assemblyInfos) {

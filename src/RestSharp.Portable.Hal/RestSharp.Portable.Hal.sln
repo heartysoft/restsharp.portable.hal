@@ -2,14 +2,15 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
-MinimumVisualStudioVersion = 10.0.40219.1
+MinimumVisualStudioVersion = 12.0.31101.0
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RestSharp.Portable.Hal", "RestSharp.Portable.Hal\RestSharp.Portable.Hal.fsproj", "{7CA70E6A-0DE2-484E-A043-83169212FFDE}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RestSharp.Portable.Hal.Tests", "RestSharp.Portable.Hal.Tests\RestSharp.Portable.Hal.Tests.fsproj", "{4C3832B2-4069-4A8D-BF7D-79A348B774AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hal", "Hal.Server\Hal.csproj", "{D58A6117-D6F4-4C6B-9270-B97615147D82}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharp.Portable.CSharpTests", "RestSharp.Portable.CSharpTests\RestSharp.Portable.CSharpTests.csproj", "{D6CBFF8D-A458-4349-9A10-13537E9E8A75}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D58A6117-D6F4-4C6B-9270-B97615147D82} = {D58A6117-D6F4-4C6B-9270-B97615147D82}
+	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RestSharp.Portable.Hal.CSharp", "RestSharp.Portable.Hal.CSharp\RestSharp.Portable.Hal.CSharp.fsproj", "{C5FCCEA6-A905-4463-922C-805FEF565F00}"
 EndProject
@@ -18,6 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{CA21B7
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RestSharp.Portable.Hal.Tests", "RestSharp.Portable.Hal.Tests\RestSharp.Portable.Hal.Tests.fsproj", "{625B5BDF-CB58-4E6A-9C88-5B4BE8767429}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D58A6117-D6F4-4C6B-9270-B97615147D82} = {D58A6117-D6F4-4C6B-9270-B97615147D82}
 	EndProjectSection
 EndProject
 Global
@@ -30,10 +36,6 @@ Global
 		{7CA70E6A-0DE2-484E-A043-83169212FFDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CA70E6A-0DE2-484E-A043-83169212FFDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CA70E6A-0DE2-484E-A043-83169212FFDE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C3832B2-4069-4A8D-BF7D-79A348B774AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C3832B2-4069-4A8D-BF7D-79A348B774AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C3832B2-4069-4A8D-BF7D-79A348B774AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C3832B2-4069-4A8D-BF7D-79A348B774AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D58A6117-D6F4-4C6B-9270-B97615147D82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D58A6117-D6F4-4C6B-9270-B97615147D82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D58A6117-D6F4-4C6B-9270-B97615147D82}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -46,6 +48,10 @@ Global
 		{C5FCCEA6-A905-4463-922C-805FEF565F00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C5FCCEA6-A905-4463-922C-805FEF565F00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C5FCCEA6-A905-4463-922C-805FEF565F00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{625B5BDF-CB58-4E6A-9C88-5B4BE8767429}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{625B5BDF-CB58-4E6A-9C88-5B4BE8767429}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{625B5BDF-CB58-4E6A-9C88-5B4BE8767429}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{625B5BDF-CB58-4E6A-9C88-5B4BE8767429}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
