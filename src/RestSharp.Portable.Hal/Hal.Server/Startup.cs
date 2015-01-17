@@ -1,0 +1,52 @@
+﻿using System;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Web.Http;
+using CacheCow.Server;
+using Microsoft.Owin;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Owin;
+using WebApi.Hal;
+
+[assembly: OwinStartup(typeof(Hal.Startup))]
+
+namespace Hal
+{
+    public class Startup
+    {
+        public void Configuration(IAppBuilder app)
+        {
+            var config = new HttpConfiguration();
+
+            var jsonHalMediaTypeFormatter = new JsonHalMediaTypeFormatter();
+            jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/hal+json"));
+            jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
+            jsonHalMediaTypeFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Include;
+            jsonHalMediaTypeFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+
+            config.Formatters.Add(jsonHalMediaTypeFormatter);
+            config.Formatters.Add(new XmlHalMediaTypeFormatter());
+
+            config.MessageHandlers.Add(new CachingHandler(config));
+
+            //AreaRegistration.RegisterAllAreas();
+
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Include;
+
+            config.MapHttpAttributeRoutes();
+
+            config.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+
+
+            app.UseWebApi(config);
+            // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888
+        }
+    }
+}

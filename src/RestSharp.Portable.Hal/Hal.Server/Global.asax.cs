@@ -29,10 +29,8 @@ namespace Hal
             GlobalConfiguration.Configuration.Formatters.Add(jsonHalMediaTypeFormatter);
             GlobalConfiguration.Configuration.Formatters.Add(new XmlHalMediaTypeFormatter());
 
-            //GlobalConfiguration.Configuration.MessageHandlers.Add(new CachingHandler(GlobalConfiguration.Configuration));
-
             AreaRegistration.RegisterAllAreas();
-            GlobalConfiguration.Configure(WebApiConfig.Register);
+            //GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="E:\github\heartysoft\restsharp.portable.hal\src\RestSharp.Portable.Hal\NonPortable.Tests\bin\Debug\NonPortable.Tests.dll" total="54" errors="15" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2015-01-17" time="17:33:21">
+  <environment nunit-version="2.6.3.13283" clr-version="2.0.50727.8009" os-version="Microsoft Windows NT 6.2.9200.0" platform="Win32NT" cwd="E:\github\heartysoft\restsharp.portable.hal" machine-name="HEARTYZ" user="Ashic" user-domain="HEARTYZ" />
+  <culture-info current-culture="en-GB" current-uiculture="en-US" />
+  <test-suite type="Test Project" name="" executed="True" result="Failure" success="False" time="9.822" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="E:\github\heartysoft\restsharp.portable.hal\src\RestSharp.Portable.Hal\NonPortable.Tests\bin\Debug\NonPortable.Tests.dll" executed="True" result="Failure" success="False" time="0.444" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="RestSharp" executed="True" result="Failure" success="False" time="0.435" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Portable" executed="True" result="Failure" success="False" time="0.434" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="Hal" executed="True" result="Failure" success="False" time="0.434" asserts="0">
+                    <results>
+                      <test-suite type="TestFixture" name="Tests+HalTests" executed="True" result="Failure" success="False" time="0.432" asserts="0">
+                        <results>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.json nuances" executed="True" result="Error" success="False" time="0.015" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.MissingMethodException : Method not found: 'System.String System.Object.ToString()'.]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.json nuances()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.merging forms" executed="True" result="Success" success="True" time="0.366" asserts="5" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.provided url segment should take precedence" executed="True" result="Error" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.MissingMethodException : Method not found: 'System.String System.Object.ToString()'.]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.provided url segment should take precedence()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should allow url segment state" executed="True" result="Error" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.MissingMethodException : Method not found: 'System.String System.Object.ToString()'.]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should allow url segment state()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should be able to get resource" executed="True" result="Error" success="False" time="0.004" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.IO.FileLoadException : Could not load file or assembly 'FSharp.Core, Version=3.259.3.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should be able to get resource()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should be able to get resource following link" executed="True" result="Error" success="False" time="0.001" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.IO.FileLoadException : Could not load file or assembly 'FSharp.Core, Version=3.259.3.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should be able to get resource following link()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should be able to get resource following multiple links" executed="True" result="Error" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.IO.FileLoadException : Could not load file or assembly 'FSharp.Core, Version=3.259.3.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should be able to get resource following multiple links()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should delete to server" executed="True" result="Error" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.IO.FileLoadException : Could not load file or assembly 'FSharp.Core, Version=3.259.3.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should delete to server()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should follow link in embedded resource" executed="True" result="Error" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.MissingMethodException : Method not found: 'System.String System.Object.ToString()'.]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should follow link in embedded resource()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should follow multiple rels in one go" executed="True" result="Error" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.MissingMethodException : Method not found: 'System.String System.Object.ToString()'.]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should follow multiple rels in one go()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should follow templated link" executed="True" result="Error" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.MissingMethodException : Method not found: 'System.String System.Object.ToString()'.]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should follow templated link()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should get embedded resource" executed="True" result="Error" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.MissingMethodException : Method not found: 'System.String System.Object.ToString()'.]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should get embedded resource()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should Post form to server" executed="True" result="Error" success="False" time="0.001" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.IO.FileLoadException : Could not load file or assembly 'FSharp.Core, Version=3.259.3.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should Post form to server()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should Post form to server and parse body (if you want)" executed="True" result="Error" success="False" time="0.001" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.IO.FileLoadException : Could not load file or assembly 'FSharp.Core, Version=3.259.3.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should Post form to server and parse body (if you want)()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should Post form to sever and parse body nicely (if you want)" executed="True" result="Error" success="False" time="0.001" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.IO.FileLoadException : Could not load file or assembly 'FSharp.Core, Version=3.259.3.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should Post form to sever and parse body nicely (if you want)()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should put to server" executed="True" result="Error" success="False" time="0.001" asserts="0">
+                            <failure>
+                              <message><![CDATA[System.IO.FileLoadException : Could not load file or assembly 'FSharp.Core, Version=3.259.3.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)]]></message>
+                              <stack-trace><![CDATA[at RestSharp.Portable.Hal.Tests.HalTests.should put to server()
+]]></stack-trace>
+                            </failure>
+                          </test-case>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="Assembly" name="E:\github\heartysoft\restsharp.portable.hal\src\RestSharp.Portable.Hal\RestSharp.Portable.CSharpTests\bin\Debug\RestSharp.Portable.CSharpTests.dll" executed="True" result="Success" success="True" time="7.329" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="RestSharp" executed="True" result="Success" success="True" time="7.320" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Portable" executed="True" result="Success" success="True" time="7.319" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="CSharpTests" executed="True" result="Success" success="True" time="7.319" asserts="0">
+                    <results>
+                      <test-suite type="TestFixture" name="CacheCowIntegrationTests" executed="True" result="Success" success="True" time="6.032" asserts="0">
+                        <results>
+                          <test-case name="RestSharp.Portable.CSharpTests.CacheCowIntegrationTests.cache_cow_will_cache" executed="True" result="Success" success="True" time="5.051" asserts="4" />
+                          <test-case name="RestSharp.Portable.CSharpTests.CacheCowIntegrationTests.response_is_cached_when_using_cacheCow" executed="True" result="Success" success="True" time="0.745" asserts="4" />
+                          <test-case name="RestSharp.Portable.CSharpTests.CacheCowIntegrationTests.response_is_cached_when_using_cacheCow_with_filestore" executed="True" result="Success" success="True" time="0.216" asserts="4" />
+                        </results>
+                      </test-suite>
+                      <test-suite type="TestFixture" name="HalClientTests" executed="True" result="Success" success="True" time="1.278" asserts="0">
+                        <results>
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.can_pass_in_custom_httpClientFactory" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.provided_url_segment_should_take_precedence" executed="True" result="Success" success="True" time="0.746" asserts="3" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_allow_url_segment_state" executed="True" result="Success" success="True" time="0.021" asserts="3" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_delete_to_server" executed="True" result="Success" success="True" time="0.252" asserts="2" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_follow_link_in_embedded_resource" executed="True" result="Success" success="True" time="0.030" asserts="2" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_follow_location_header" executed="True" result="Success" success="True" time="0.034" asserts="2" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_follow_location_header_and_continue_traversal" executed="True" result="Success" success="True" time="0.031" asserts="1" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_follow_multiple_rels_in_one_go" executed="True" result="Success" success="True" time="0.014" asserts="2" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_follow_templated_link" executed="True" result="Success" success="True" time="0.009" asserts="3" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_get_embedded_resource" executed="True" result="Success" success="True" time="0.026" asserts="2" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_get_resource" executed="True" result="Success" success="True" time="0.004" asserts="1" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_get_resource_following_link" executed="True" result="Success" success="True" time="0.007" asserts="1" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_get_resource_following_multiple_links" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_post_form_to_server" executed="True" result="Success" success="True" time="0.010" asserts="2" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_post_form_to_server_and_parse_body_if_you_want" executed="True" result="Success" success="True" time="0.010" asserts="2" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_post_form_to_server_and_parse_body_nicely_if_you_want" executed="True" result="Success" success="True" time="0.011" asserts="2" />
+                          <test-case name="RestSharp.Portable.CSharpTests.HalClientTests.should_put_to_server" executed="True" result="Success" success="True" time="0.015" asserts="2" />
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="Assembly" name="E:\github\heartysoft\restsharp.portable.hal\src\RestSharp.Portable.Hal\RestSharp.Portable.Hal.Tests\bin\Debug\RestSharp.Portable.Hal.Tests.dll" executed="True" result="Success" success="True" time="1.297" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="RestSharp" executed="True" result="Success" success="True" time="1.288" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Portable" executed="True" result="Success" success="True" time="1.287" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="Hal" executed="True" result="Success" success="True" time="1.287" asserts="0">
+                    <results>
+                      <test-suite type="TestFixture" name="Tests+HalTests" executed="True" result="Success" success="True" time="1.286" asserts="0">
+                        <results>
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.json nuances" executed="True" result="Success" success="True" time="0.780" asserts="7" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.merging forms" executed="True" result="Success" success="True" time="0.227" asserts="5" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.provided url segment should take precedence" executed="True" result="Success" success="True" time="0.060" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should allow url segment state" executed="True" result="Success" success="True" time="0.005" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should be able to get resource" executed="True" result="Success" success="True" time="0.003" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should be able to get resource following link" executed="True" result="Success" success="True" time="0.006" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should be able to get resource following multiple links" executed="True" result="Success" success="True" time="0.010" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should delete to server" executed="True" result="Success" success="True" time="0.049" asserts="2" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should follow link in embedded resource" executed="True" result="Success" success="True" time="0.011" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should follow location header" executed="True" result="Success" success="True" time="0.013" asserts="2" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should follow location header and continue traversal" executed="True" result="Success" success="True" time="0.020" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should follow multiple rels in one go" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should follow templated link" executed="True" result="Success" success="True" time="0.005" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should get embedded resource" executed="True" result="Success" success="True" time="0.006" asserts="1" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should post form to server" executed="True" result="Success" success="True" time="0.010" asserts="2" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should post form to server and parse body (if you want)" executed="True" result="Success" success="True" time="0.008" asserts="2" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should post form to sever and parse body nicely (if you want)" executed="True" result="Success" success="True" time="0.011" asserts="2" />
+                          <test-case name="RestSharp.Portable.Hal.Tests+HalTests.should put to server" executed="True" result="Success" success="True" time="0.008" asserts="2" />
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
