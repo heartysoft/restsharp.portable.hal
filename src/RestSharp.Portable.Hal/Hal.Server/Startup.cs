@@ -15,6 +15,10 @@ namespace Hal
 {
     public class Startup
     {
+        /// <summary>
+        /// Enable for testing, or hosting without setting cache in global.asax.cs
+        /// </summary>
+        protected virtual bool RegisterCachingHandler {get { return false; }}
         public void Configuration(IAppBuilder app)
         {
             var config = new HttpConfiguration();
@@ -29,12 +33,13 @@ namespace Hal
             config.Formatters.Add(jsonHalMediaTypeFormatter);
             config.Formatters.Add(new XmlHalMediaTypeFormatter());
 
-            config.MessageHandlers.Add(new CachingHandler(config));
+            //config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            //config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Include;
 
-            //AreaRegistration.RegisterAllAreas();
-
-            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-            config.Formatters.JsonFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Include;
+            if (RegisterCachingHandler)
+            {
+                config.MessageHandlers.Add(new CachingHandler(config));
+            }
 
             config.MapHttpAttributeRoutes();
 

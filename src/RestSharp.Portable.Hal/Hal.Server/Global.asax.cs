@@ -19,18 +19,7 @@ namespace Hal
     {
         protected void Application_Start()
         {
-            var jsonHalMediaTypeFormatter = new JsonHalMediaTypeFormatter();
-            jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
-            jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/hal+json"));
-            jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
-            jsonHalMediaTypeFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Include;
-            jsonHalMediaTypeFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-
-            GlobalConfiguration.Configuration.Formatters.Add(jsonHalMediaTypeFormatter);
-            GlobalConfiguration.Configuration.Formatters.Add(new XmlHalMediaTypeFormatter());
-
             AreaRegistration.RegisterAllAreas();
-            //GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
