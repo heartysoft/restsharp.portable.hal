@@ -1,27 +1,57 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
+using Hal;
+using Microsoft.Owin.Testing;
 using NUnit.Framework;
 using RestSharp.Portable.CSharpTests;
 using RestSharp.Portable.Hal.CSharp;
+using RestSharp.Portable.HttpClientImpl;
+using Simple.Data.Extensions;
 
 namespace RestSharp.Portable.CSharpTests
 {
+    public class TestHttpClientFactory : DefaultHttpClientFactory
+    {
+        private readonly TestServer _server;
+        private readonly DelegatingHandler[] _delegatingHandlers;
+
+        public TestHttpClientFactory(TestServer server, params DelegatingHandler[] delegatingHandlers)
+        {
+            _server = server;
+            _delegatingHandlers = delegatingHandlers;
+        }
+
+        public override HttpClient CreateClient(IRestClient client, IRestRequest request)
+        {
+            var handler =  HttpClientFactory.CreatePipeline(_server.Handler, _delegatingHandlers);
+            return new HttpClient(handler){BaseAddress = new Uri("http://localhost")};
+        }
+
+    }
+    
     [TestFixture]
     public class HalClientTests
     {
-        private HalClient createClient(HalClientFactory clientFactory)
-        {
-            return clientFactory.CreateHalClient(TestConfig.RootUrl);
-        }
 
         private HalClient _client;
+        private TestServer _server;
+
+        [TestFixtureSetUp]
+        public void FixtueSetup()
+        {
+            _server = TestServer.Create<Startup>();
+        }
 
         [SetUp]
         public void SetUp()
         {
             var clientFactory = new HalClientFactory()
-                 .Accept("application/hal+json");
-            _client = createClient(clientFactory);
+                 .Accept("application/hal+json")
+                 .HttpClientFactory(new TestHttpClientFactory(_server));
+            _client = clientFactory.CreateHalClient("http://dummy-unsused");
         }
 
         [Test]
@@ -250,11 +280,6 @@ namespace RestSharp.Portable.CSharpTests
         [Test]
         public void can_pass_in_custom_httpClientFactory()
         {
-            var clientFactory = new HalClientFactory().HttpClientFactory(new TestClientFactory())
-                .Accept("application/hal+json");
-
-            createClient(clientFactory);
-
             Assert.IsNotNull(_client);
         }
 

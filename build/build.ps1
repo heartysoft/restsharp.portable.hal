@@ -77,5 +77,9 @@ task compile -depends version {
 	}
 }
 
+task test -depends compile {
+    
+}
+
 task package-web {
 }

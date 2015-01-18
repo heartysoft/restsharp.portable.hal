@@ -42,6 +42,15 @@
     <Reference Include="CacheCow.Common">
       <HintPath>..\packages\CacheCow.Common.0.6.0\lib\net40\CacheCow.Common.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\packages\Microsoft.Owin.3.0.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Hosting">
+      <HintPath>..\packages\Microsoft.Owin.Hosting.3.0.0\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Testing">
+      <HintPath>..\packages\Microsoft.Owin.Testing.3.0.0\lib\net45\Microsoft.Owin.Testing.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -49,6 +58,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp.Portable, Version=2.1.0.0, Culture=neutral, PublicKeyToken=be81bb0f53eab22f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -89,7 +101,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CacheCowHttpClientFactory.cs" />
     <Compile Include="CacheCowIntegrationTests.cs" />
     <Compile Include="DTOs.cs" />
     <Compile Include="HalClientTests.cs" />
@@ -102,6 +113,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Hal.Server\Hal.csproj">
+      <Project>{d58a6117-d6f4-4c6b-9270-b97615147d82}</Project>
+      <Name>Hal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RestSharp.Portable.Hal.CSharp\RestSharp.Portable.Hal.CSharp.fsproj">
       <Project>{c5fccea6-a905-4463-922c-805fef565f00}</Project>
       <Name>RestSharp.Portable.Hal.CSharp</Name>

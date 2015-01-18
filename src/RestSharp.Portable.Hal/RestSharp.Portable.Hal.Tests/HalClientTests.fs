@@ -14,10 +14,6 @@ open RestSharp.Portable
 open RestSharp.Portable.HttpClientImpl
 
 
-type TestStartUp () = 
-    inherit Hal.Startup () with
-        override this.RegisterCachingHandler with get () = false
-
 type TestHttpClientFactory (server:TestServer) =
     inherit DefaultHttpClientFactory() 
     override this.CreateClient(restClient, request) : HttpClient = 
@@ -26,8 +22,7 @@ type TestHttpClientFactory (server:TestServer) =
 let rootUrl = "http://dummy-unused/"
 
 module TestConfig = 
-
-    let private server:TestServer = TestServer.Create<TestStartUp>()
+    let private server:TestServer = TestServer.Create<Hal.Startup>()
     let CreateClient() = 
         HalClientFactory()
             .Accept("application/hal+json")
