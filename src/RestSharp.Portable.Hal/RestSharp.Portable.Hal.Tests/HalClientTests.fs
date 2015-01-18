@@ -1,19 +1,38 @@
 ﻿module RestSharp.Portable.Hal.Tests
 
 open NUnit.Framework
+open FsUnit
 open RestSharp.Portable.Hal
 open Newtonsoft.Json.Linq
 open System.Net
-open System.Web.Http
+open Microsoft.Owin
+open System
+open System.Net.Http
+open Microsoft.Owin.Hosting
+open Microsoft.Owin.Testing
+open RestSharp.Portable
+open RestSharp.Portable.HttpClientImpl
 
 
-let rootUrl = "http://localhost:62582/"
+type TestStartUp () = 
+    inherit Hal.Startup () with
+        override this.RegisterCachingHandler with get () = false
 
+type TestHttpClientFactory (server:TestServer) =
+    inherit DefaultHttpClientFactory() 
+    override this.CreateClient(restClient, request) : HttpClient = 
+        server.HttpClient
+    
+let rootUrl = "http://dummy-unused/"
 
-let clientFactory = 
-            HalClientFactory()
-                .Accept("application/hal+json")
-let client = clientFactory.CreateHalClient(rootUrl)
+module TestConfig = 
+
+    let private server:TestServer = TestServer.Create<TestStartUp>()
+    let CreateClient() = 
+        HalClientFactory()
+            .Accept("application/hal+json")
+            .HttpClientFactory(TestHttpClientFactory(server):> IHttpClientFactory |> Some)
+            .CreateHalClient rootUrl
 
 
 type RegistrationForm = {
@@ -38,14 +57,16 @@ type LoadCardForm = {amount:decimal; currency:string}
 
 type CardEmbedded = { number:int; ``type``:string }
 
+
+
 [<TestFixture>]
 type HalTests() = 
-    [<TestFixtureSetUp>]
-    member test.Setup () = 
-        
-        
-        //let server = new HttpServer()
-//        server.
+
+    let mutable client:HalClient = TestConfig.CreateClient()
+
+    [<SetUp>]
+    member test.Setup () =
+        client <- TestConfig.CreateClient() 
         ()
 
     [<Test>]
