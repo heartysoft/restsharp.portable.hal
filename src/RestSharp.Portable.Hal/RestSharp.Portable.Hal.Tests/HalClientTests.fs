@@ -1,20 +1,35 @@
 ﻿module RestSharp.Portable.Hal.Tests
 
 open NUnit.Framework
+open FsUnit
 open RestSharp.Portable.Hal
 open Newtonsoft.Json.Linq
 open System.Net
-open System.Web.Http
+open Microsoft.Owin
+open System
+open System.Net.Http
+open Microsoft.Owin.Hosting
+open Microsoft.Owin.Testing
+open RestSharp.Portable
+open RestSharp.Portable.HttpClientImpl
 
 
-let rootUrl = "http://localhost:62582/"
+type TestHttpClientFactory (server:TestServer) =
+    inherit DefaultHttpClientFactory() 
+    override this.CreateClient(restClient, request) : HttpClient = 
+        server.HttpClient
+    
+let rootUrl = "http://dummy-unused/"
 
+module TestConfig = 
+    let private server:TestServer = TestServer.Create<Hal.Startup>()
+    let CreateClient() = 
+        HalClientFactory()
+            .Accept("application/hal+json")
+            .HttpClientFactory(TestHttpClientFactory(server):> IHttpClientFactory |> Some)
+            .CreateHalClient rootUrl
 
-let clientFactory = 
-            HalClientFactory()
-                .Accept("application/hal+json")
-let client = clientFactory.CreateHalClient(rootUrl)
-
+let inline (===) left = left |> should equal
 
 type RegistrationForm = {
         id:int;
@@ -38,20 +53,22 @@ type LoadCardForm = {amount:decimal; currency:string}
 
 type CardEmbedded = { number:int; ``type``:string }
 
+
+
 [<TestFixture>]
 type HalTests() = 
-    [<TestFixtureSetUp>]
-    member test.Setup () = 
-        
-        
-        //let server = new HttpServer()
-//        server.
+
+    let mutable client:HalClient = TestConfig.CreateClient()
+
+    [<SetUp>]
+    member test.Setup () =
+        client <- TestConfig.CreateClient() 
         ()
 
     [<Test>]
     member test.``should be able to get resource`` () =
         let resource = client.From("api/cardholders").GetAsync() |> Async.RunSynchronously
-        Assert.IsInstanceOf<Resource>(resource)
+        resource |> should be ofExactType<Resource>
 
     [<Test>]
     member test.``should be able to get resource following link`` () =
@@ -61,8 +78,7 @@ type HalTests() =
                 .GetAsync() |> Async.RunSynchronously
         
         let tjo = resource.Parse<'RegisterForm>()
-        
-        Assert.AreEqual(-1, tjo.id)
+        tjo.id === -1
     
     [<Test>]
     member test.``should be able to get resource following multiple links`` () =
@@ -72,7 +88,7 @@ type HalTests() =
                 .Follow("self")
                 .GetAsync<RegistrationForm>() |> Async.RunSynchronously
         
-        Assert.AreEqual(-1, resource.id)
+        resource.id === -1
     
     [<Test>]
     member test.``should follow templated link`` () = 
@@ -87,7 +103,7 @@ type HalTests() =
             anotherCard = { idAgain = "again" }
         }
 
-        Assert.AreEqual(expected, resource)
+        resource === expected
    
     [<Test>]
     member test.``should allow url segment state`` () = 
@@ -103,7 +119,7 @@ type HalTests() =
             anotherCard = { idAgain = "again" }
         }
 
-        Assert.AreEqual(expected, resource)
+        resource === expected
         
     [<Test>]
     member test.``provided url segment should take precedence`` () = 
@@ -119,7 +135,7 @@ type HalTests() =
             anotherCard = { idAgain = "again" }
         }
 
-        Assert.AreEqual(expected, resource)  
+        resource === expected
 
     [<Test>]
     member test.``json nuances`` () = 
@@ -131,11 +147,10 @@ type HalTests() =
                 |> Async.RunSynchronously
         
         let embedded = resource.data.["_embedded"]
-
-        Assert.IsNotNull embedded
+        embedded |> should not' (be Null)
 
         let target = embedded.["card"]
-        Assert.IsNotNull target
+        target |> should not' (be Null)
 
         let ne = Newtonsoft.Json.Linq.JObject.Parse("{foo:20}")
         let wn = Newtonsoft.Json.Linq.JObject.Parse("{foo:20, _embedded:null}") //pain
@@ -144,14 +159,12 @@ type HalTests() =
         let wen = Newtonsoft.Json.Linq.JObject.Parse("{foo:20, _embedded:{card:null}}") //pain
         let wenc = Newtonsoft.Json.Linq.JObject.Parse("{foo:20, _embedded:{foo:null}}")
         
-        ne.["_embedded"] |> Assert.IsNull
+        ne.["_embedded"] |> should be Null
+        wo.["_embedded"] |> should not' (be Null)
+        we.["_embedded"].["card"] |> should not' (be Null)
+        wenc.["_embedded"].["card"] |> should be Null
 
-        wo.["_embedded"] |> Assert.IsNotNull
-        
-        we.["_embedded"].["card"] |> Assert.IsNotNull
-        wenc.["_embedded"].["card"] |> Assert.IsNull
-
-        Assert.AreEqual(Newtonsoft.Json.Linq.JTokenType.Null, wn.["_embedded"].Type)
+        wn.["_embedded"].Type === Newtonsoft.Json.Linq.JTokenType.Null
 
 
     [<Test>]
@@ -164,7 +177,7 @@ type HalTests() =
         
         let expected = { CardEmbedded.number = 101; ``type``="mastercard" }
 
-        Assert.AreEqual(expected, resource)  
+        resource === expected
 
     [<Test>]
     member test.``should get embedded resource`` () = 
@@ -176,7 +189,7 @@ type HalTests() =
         
         let expected = { CardEmbedded.number = 101; ``type``="mastercard" }
 
-        Assert.AreEqual(expected, resource)  
+        resource === expected
 
     [<Test>]
     member test.``should follow link in embedded resource`` () = 
@@ -188,8 +201,9 @@ type HalTests() =
                 .GetAsync<LoadCardForm>() |> Async.RunSynchronously
         
         let expected = { LoadCardForm.amount = 100M; currency="GBP" }
-
-        Assert.AreEqual(expected, resource) 
+       
+        resource === expected
+  
 
     [<Test>]
     member test.``merging forms`` () = 
@@ -197,12 +211,12 @@ type HalTests() =
         let resource = JObject.Parse("{amount:0, currency:'USD', unknown:22, _links: {self:'/api/foo'}, _embedded:{card:{}}}")
 
         let merged = merge resource data
-        
-        let ass1 = Assert.AreEqual(100, merged.Value<int>("amount"))
-        let ass2 = Assert.AreEqual("GBP", merged.Value<string>("currency"))
-        let ass3 = Assert.AreEqual(22, merged.Value<int>("unknown"))
-        let ass4 = Assert.IsNull(merged.["_links"])
-        Assert.IsNull(merged.["_embedded"])
+       
+        merged.Value<int>("amount") === 100
+        merged.Value<string>("currency") === "GBP"
+        merged.Value<int>("unknown") === 22
+        merged.["_links"] |> should be Null
+        merged.["_embedded"] |> should be Null
 
     [<Test>]
     member test.``should post form to server`` () = 
@@ -211,11 +225,11 @@ type HalTests() =
             client.From("api/cardholders")
                 .Follow("register")
                 .PostAsync(newData) |> Async.RunSynchronously
-        
-        let ignored = Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
-        
+       
         let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-        Assert.AreEqual("/api/cardholders/55", locationHeader)
+
+        resource.response.StatusCode === HttpStatusCode.Created
+        locationHeader === "/api/cardholders/55"
 
     [<Test>]
     member test.``should post form to server and parse body (if you want)`` () = 
@@ -227,8 +241,8 @@ type HalTests() =
 
         let body = resource.Parse<CardHolderDetails>()
         
-        let ignored = Assert.AreEqual("Johny", body.name)
-        Assert.AreEqual("lala", body.anotherCard.idAgain)
+        body.name === "Johny"
+        body.anotherCard.idAgain === "lala"
 
     [<Test>]
     member test.``should post form to sever and parse body nicely (if you want)`` () = 
@@ -238,9 +252,8 @@ type HalTests() =
                 .Follow("register")
                 .PostAsyncAndParse<CardHolderDetails>(newData) |> Async.RunSynchronously
 
-        
-        let ignored = Assert.AreEqual("Johny", resource.name)
-        Assert.AreEqual("lala", resource.anotherCard.idAgain)
+        resource.name === "Johny"
+        resource.anotherCard.idAgain === "lala"
 
     [<Test>]
     member test.``should put to server`` () =
@@ -250,10 +263,10 @@ type HalTests() =
                 .Follow("register")
                 .PutAsync(newData) |> Async.RunSynchronously
 
-        Assert.AreEqual(HttpStatusCode.Created, resource.response.StatusCode)
-
         let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-        Assert.AreEqual("/api/cardholders/55", locationHeader)
+
+        resource.response.StatusCode === HttpStatusCode.Created
+        locationHeader === "/api/cardholders/55"
 
     [<Test>]
     member test.``should delete to server`` () =
@@ -263,9 +276,10 @@ type HalTests() =
                 .Follow("register")
                 .DeleteAsync(newData) |> Async.RunSynchronously
         
-        Assert.AreEqual(HttpStatusCode.OK, resource.response.StatusCode)
         let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-        Assert.AreEqual("/api/cardholders", locationHeader)       
+
+        resource.response.StatusCode === HttpStatusCode.OK
+        locationHeader === "/api/cardholders" 
 
     [<Test>]
     member test.``should follow location header`` () =
@@ -279,9 +293,8 @@ type HalTests() =
             resource.FollowHeader("Location")
                 .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
         
-        
-        let ignored = Assert.AreEqual("Customer Number55", nr.name) //irl would be Johny but server does not persist
-        Assert.AreEqual("again", nr.anotherCard.idAgain)
+        nr.name === "Customer Number55" //irl would be Johny but server does not persist
+        nr.anotherCard.idAgain === "again"
 
     [<Test>]
     member test.``should follow location header and continue traversal`` () =
@@ -296,7 +309,7 @@ type HalTests() =
                 .Follow("updatecardholder")
                 .GetAsync<UpdateCardHolderForm>() |> Async.RunSynchronously
 
-        Assert.AreEqual(0, nr.id)
+        nr.id === 0
 
     
     

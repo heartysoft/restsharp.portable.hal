@@ -5,7 +5,7 @@ let buildDir = "./out/"
 
 // Default target
 Target "Default" (fun _ ->
-    trace "Hello World from FAKE"
+    trace "Finished default build. Bye bye."
 )
 
 Target "Clean" (fun _ ->
@@ -25,6 +25,8 @@ Target "Test" (fun _ ->
             {p with
                 DisableShadowCopy = true;
                 OutputFile = "./TestResults.xml"
+                //ProcessModel = SeparateProcessModel;
+                //Domain = MultipleDomainModel
             }
         )
 )
