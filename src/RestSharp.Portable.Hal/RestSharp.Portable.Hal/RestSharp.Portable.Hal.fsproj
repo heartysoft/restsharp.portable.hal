@@ -51,6 +51,7 @@
   </Target>
   <ItemGroup>
     <Compile Include="HalClient.fs" />
+    <Compile Include="SolutionInfo.fs" />
     <Content Include="packages.config" />
     <None Include="RestSharp.Portable.Hal.nuspec" />
   </ItemGroup>

@@ -13,7 +13,6 @@ open Microsoft.Owin.Testing
 open RestSharp.Portable
 open RestSharp.Portable.HttpClientImpl
 
-
 type TestHttpClientFactory (server:TestServer) =
     inherit DefaultHttpClientFactory() 
     override this.CreateClient(restClient, request) : HttpClient = 
