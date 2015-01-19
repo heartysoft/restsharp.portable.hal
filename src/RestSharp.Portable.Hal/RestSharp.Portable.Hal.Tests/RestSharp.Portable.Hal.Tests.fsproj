@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>RestSharp.Portable.Hal.Tests</RootNamespace>
     <AssemblyName>RestSharp.Portable.Hal.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.3</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
     <Name>RestSharp.Portable.Hal.Tests</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
