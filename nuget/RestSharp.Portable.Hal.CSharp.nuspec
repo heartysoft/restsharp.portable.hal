@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">    
+    <id>@project@</id>
+    <title>RestSharp.Portable.HAL.CSharp</title>
+    <version>@build.number@</version>
+    <authors>@authors@</authors>
+    <owners>@authors@</owners>
+    <summary>@summary@</summary>
+    <licenseUrl>https://raw.githubusercontent.com/heartysoft/restsharp.portable.hal/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/heartysoft/restsharp.portable.hal</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/heartysoft/restsharp.portable.hal/master/assets/images/hal_9000.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>@description@</description>
+    <releaseNotes>@releaseNotes@</releaseNotes>
+    <copyright>@copyright@</copyright>    
+    <tags>@tags@</tags>
+    <dependencies>
+      
+      <group>
+        <dependency id="RestSharp.Portable.HAL" version="[@build.number@,@build.number@]" />
+      </group>
+      
+    </dependencies>
+  </metadata>
+
+  <files>
+    <file src="..\src\RestSharp.Portable.HAL\RestSharp.Portable.HAL.CSharp\bin\Release\RestSharp.Portable.HAL.CSharp.dll" target="lib/net45" />
+    <file src="..\src\RestSharp.Portable.HAL\RestSharp.Portable.HAL.CSharp\bin\Release\RestSharp.Portable.HAL.CSharp.pdb" target="lib/net45" />
+    <file src="..\src\RestSharp.Portable.HAL\RestSharp.Portable.HAL.CSharp\bin\Release\RestSharp.Portable.HAL.CSharp.xml" target="lib/net45" />
+    <file src="..\src\RestSharp.Portable.HAL\RestSharp.Portable.HAL.CSharp\bin\Release\RestSharp.Portable.HAL.CSharp.dll" target="lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10" />
+    <file src="..\src\RestSharp.Portable.HAL\RestSharp.Portable.HAL.CSharp\bin\Release\RestSharp.Portable.HAL.CSharp.pdb" target="lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10" />
+    <file src="..\src\RestSharp.Portable.HAL\RestSharp.Portable.HAL.CSharp\bin\Release\RestSharp.Portable.HAL.CSharp.xml" target="lib/portable-net45+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10" />
+  </files>
+</package>

@@ -1,5 +1,24 @@
 
 Assembly:
     Company : "Heartysoft Solutions Limited"
-    Version : "0.0.1"
+    Version : "0.0.2"
     PreRelease: "alpha" #empty for release version. Informational version (and so nuget) will be Version-PrePrelease / Version
+
+Nuget:
+    HAL:
+      id: RestSharp.Portable.Hal
+      title: RestSharp.Portable.Hal
+      authors: [Ashic Mahtab, Tim Stephenson]
+      owners: Ashic Mahtab, Tim Stephenson
+      description: Portable HAL client for .NET. There's a CSharp version for CS.
+      summary: Portable HAL client for .NET. There's a CSharp version for CS.
+      tags: HAL, Client, Hypermedia, REST, Portable
+    HALCS:
+      id: RestSharp.Portable.Hal.CSharp
+      title: RestSharp.Portable.Hal.CSharp
+      authors: [Ashic Mahtab, Tim Stephenson]
+      owners: Ashic Mahtab, Tim Stephenson
+      description: Portable HAL client for .NET wrapped in a CSharp friendly wrapper
+      summary: Portable HAL client for .NET wrapped in a CSharp friendly wrapper 
+      tags: HAL, Client, Hypermedia, REST, Portable
+

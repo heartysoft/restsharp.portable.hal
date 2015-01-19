@@ -1,10 +1,12 @@
 ﻿namespace RestSharp.Portable.Hal
 open RestSharp.Portable
 open Newtonsoft.Json.Linq
+open System.Runtime.CompilerServices
 
 [<AutoOpen>]
 module Client =
 
+    [<MethodImpl(MethodImplOptions.NoInlining)>] //reflection used. if inlined, non portable clients break.
     let (=>) (left:string) (right:System.Object) =
         (left, System.Convert.ToString(right))
 
