@@ -1,6 +1,0 @@
-@{
-    ProductName = 'HAL Client';
-    CompanyName = 'TTT Moneycorp Ltd.';
-    Copyright = "Copyright © 2014 TTT Moneycorp Ltd.";
-    Version = "0.0.1";
-}
