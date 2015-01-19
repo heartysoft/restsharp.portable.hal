@@ -53,7 +53,6 @@
     <Compile Include="HalClient.fs" />
     <Compile Include="SolutionInfo.fs" />
     <Content Include="packages.config" />
-    <None Include="RestSharp.Portable.Hal.CSharp.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RestSharp.Portable.Hal\RestSharp.Portable.Hal.fsproj">

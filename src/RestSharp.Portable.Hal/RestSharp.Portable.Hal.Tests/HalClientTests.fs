@@ -53,8 +53,6 @@ type LoadCardForm = {amount:decimal; currency:string}
 type CardEmbedded = { number:int; ``type``:string }
 
 
-
-[<TestFixture>]
 type HalTests() = 
 
     let mutable client:HalClient = TestConfig.CreateClient()
