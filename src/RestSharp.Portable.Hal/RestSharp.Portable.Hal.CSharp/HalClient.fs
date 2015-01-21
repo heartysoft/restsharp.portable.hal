@@ -11,6 +11,8 @@ type Resource internal (inner:Client.Resource, requestContext:RequestContext) =
         inner.Parse<'T>()
     member this.Response = inner.response
     member this.Data = inner.data
+    member this.Embedded = inner.Embedded
+    member this.Links = inner.Links
     member this.FollowHeader header = inner.response.Headers.GetValues(header) |> Seq.head |> requestContext.FollowHeader
 and
     RequestContext internal (inner:Client.RequestContext) = 

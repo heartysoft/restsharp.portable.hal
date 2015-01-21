@@ -152,6 +152,33 @@ namespace RestSharp.Portable.CSharpTests
         }
 
         [Test]
+        public void should_get_embedded_resource_from_embedded_property()
+        {
+            var resource = _client.From("/api/cardholders")
+                .Follow("cardholder", new { id = 112 })
+                .GetAsync()
+                .Result
+                .Embedded["card"].ToObject<CardEmbedded>();
+
+            Assert.AreEqual("101", resource.Number);
+            Assert.AreEqual("mastercard", resource.Type);
+        }
+
+        [Test]
+        public void should_get_links_from_links_property()
+        {
+            var resource = _client.From("/api/cardholders")
+                .Follow("cardholder", new {id = 112})
+                .GetAsync()
+                .Result
+                .Links;
+
+            var selfLink = resource["self"].ToObject<Link>();
+
+            Assert.AreEqual("/api/cardholders/112", selfLink.Href);
+        }
+
+        [Test]
         public void should_follow_link_in_embedded_resource()
         {
             var resource = _client.From("/api/cardholders")

@@ -41,4 +41,10 @@ namespace RestSharp.Portable.CSharpTests
         public string Number { get; set; }
         public string Type { get; set; }
     }
+
+    public class Link
+    {
+        public string Rel { get; set; }
+        public string Href { get; set; }
+    }
 }
