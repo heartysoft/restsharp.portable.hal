@@ -55,6 +55,12 @@ module Client =
                 }
 
             {this.requestContext with requestParameters = newRequestParameters}
+
+        member this.Links = 
+            this.data.["_links"]
+
+        member this.Embedded = 
+             this.data.["_embedded"]
     and
         RequestContext = 
         { environment: EnvironmentParameters; requestParameters : RequestParameters}
@@ -97,11 +103,10 @@ module Client =
                 return { Resource.requestContext = this; response = res; data=data}
             } 
 
-        static member private getEmbeddedResource (data:JObject) (follow:Follow) : Option<JToken> = 
+        static member private getEmbeddedResource (embedded:JToken) (follow:Follow) : Option<JToken> = 
             match follow with
             | HeaderFollow(_) -> None
             | LinkFollow(rel, segments) ->
-                let embedded = data.["_embedded"]
                 if embedded = null then
                     None
                 else if embedded.Type = Newtonsoft.Json.Linq.JTokenType.Null then None
@@ -118,7 +123,7 @@ module Client =
                     match resource.requestContext.requestParameters.follow with
                     | [] -> resource
                     | x :: xs -> 
-                        let embedded = RequestContext.getEmbeddedResource resource.data x
+                        let embedded = RequestContext.getEmbeddedResource resource.Embedded x
                         match embedded with
                         | None -> 
                             let newRequest : RequestContext = resource.Follow x xs
@@ -150,7 +155,7 @@ module Client =
                 let! resource = this.GetAsync()
                 let form = resource.data
                 let merged = merge form data
-                let url = resource.data.["_links"].["self"].Value<string>("href")
+                let url = resource.Links.["self"].Value<string>("href")
 
                 let client = resource.requestContext.environment.client
                 let restRequest = 
