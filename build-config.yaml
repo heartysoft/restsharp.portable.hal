@@ -1,7 +1,7 @@
 
 Assembly:
     Company : "Heartysoft Solutions Limited"
-    Version : "0.0.2"
+    Version : "0.0.3"
     PreRelease: "alpha" #empty for release version. Informational version (and so nuget) will be Version-PrePrelease / Version
 
 Nuget:
