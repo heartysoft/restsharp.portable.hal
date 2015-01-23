@@ -29,5 +29,10 @@ namespace Hal.Models
         {
             public static Link LoadCard { get { return new Link("loadcard", "/api/loadCard"); } }
         }
+
+        public static class SearchLinks
+        {
+            public static Link Search { get { return new Link("search", "/api/search?&name={name}&id={id}&cardNumber={cardNumber}");} }
+        }
     }
 }

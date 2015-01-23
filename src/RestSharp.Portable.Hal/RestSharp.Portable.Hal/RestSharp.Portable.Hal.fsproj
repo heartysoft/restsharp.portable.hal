@@ -50,6 +50,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
   </Target>
   <ItemGroup>
+    <Compile Include="StringHelpers.fs" />
     <Compile Include="HalClient.fs" />
     <Compile Include="SolutionInfo.fs" />
     <Content Include="packages.config" />

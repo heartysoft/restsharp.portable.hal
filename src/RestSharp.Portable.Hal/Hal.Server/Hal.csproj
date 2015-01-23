@@ -182,6 +182,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoadCardController.cs" />
     <Compile Include="Controllers\RegisterCardHolderController.cs" />
+    <Compile Include="Controllers\SearchController.cs" />
     <Compile Include="Controllers\UpdateCardHolderController.cs" />
     <Compile Include="Models\LinkTemplates.cs" />
     <Compile Include="Controllers\CardHoldersController.cs" />

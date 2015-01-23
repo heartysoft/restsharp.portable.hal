@@ -47,4 +47,12 @@ namespace RestSharp.Portable.CSharpTests
         public string Rel { get; set; }
         public string Href { get; set; }
     }
+
+
+    public class SearchQuery
+    {
+        public string Name { get; set; }
+        public int Id { get; set; }
+        public string CardNumber { get; set; }
+    }
 }
