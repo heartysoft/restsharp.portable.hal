@@ -100,7 +100,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp.Portable">
-      <HintPath>..\packages\FubarCoder.RestSharp.Portable.2.1.0\lib\net45\RestSharp.Portable.dll</HintPath>
+      <HintPath>..\packages\FubarCoder.RestSharp.Portable.2.2.0-pre3\lib\net45\RestSharp.Portable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

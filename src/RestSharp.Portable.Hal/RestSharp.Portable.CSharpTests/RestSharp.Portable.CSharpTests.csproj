@@ -64,7 +64,7 @@
     </Reference>
     <Reference Include="RestSharp.Portable, Version=2.1.0.0, Culture=neutral, PublicKeyToken=be81bb0f53eab22f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FubarCoder.RestSharp.Portable.2.1.0\lib\net45\RestSharp.Portable.dll</HintPath>
+      <HintPath>..\packages\FubarCoder.RestSharp.Portable.2.2.0-pre3\lib\net45\RestSharp.Portable.dll</HintPath>
     </Reference>
     <Reference Include="Simple.Data, Version=0.19.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
