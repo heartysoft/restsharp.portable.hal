@@ -56,6 +56,7 @@ namespace Hal.Controllers
         protected override void CreateHypermedia()
         {
             Links.Add(LinkTemplates.CardHolders.CardHolder);
+            Links.Add(LinkTemplates.SearchLinks.Search);
         }
     }
 

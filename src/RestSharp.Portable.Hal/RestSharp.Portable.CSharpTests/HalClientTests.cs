@@ -336,6 +336,19 @@ namespace RestSharp.Portable.CSharpTests
             Assert.IsNotNull(_client);
         }
 
-        
+        [Test]
+        public void can_follow_templated_link_with_complex_object()
+        {
+            var query = new SearchQuery() {Name = "Johny", Id = 101, CardNumber = "12345578778"};
+
+            var resource = _client.From("/api/cardholders")
+                .Follow("search", query, true)
+                .GetAsync<SearchQuery>()
+                .Result;
+
+            Assert.AreEqual("Here's Johny!", resource.Name);
+            Assert.AreEqual(101, resource.Id);
+            Assert.AreEqual("12345578778", resource.CardNumber);
+        }
     }
 }
