@@ -99,6 +99,33 @@ namespace RestSharp.Portable.CSharpTests
         }
 
         [Test]
+        public void can_convert_url_segments_to_camel_case()
+        {
+            var query = new { Id = 55};
+
+            var resource =
+                _client.From("/api/cardholders")
+                    .UrlSegments(query, true)
+                    .Follow("cardholder").GetAsync<CardHolderDetails>()
+                    .Result;
+
+            Assert.AreEqual(55, resource.Id);
+        }
+
+        [Test]
+        public void can_follow_with_object_to_camel_case()
+        {
+            var query = new { Id = 55 };
+
+            var resource =
+                _client.From("/api/cardholders")
+                    .Follow("cardholder", query, true).GetAsync<CardHolderDetails>()
+                    .Result;
+
+            Assert.AreEqual(55, resource.Id);
+        }
+
+        [Test]
         public void should_allow_url_segment_state()
         {
             var resource = _client.From("/api/cardholders")
@@ -110,7 +137,6 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual("Customer Number123", resource.Name);
             Assert.AreEqual("again", resource.AnotherCard.IdAgain);
         }
-
 
         [Test]
         public void provided_url_segment_should_take_precedence()

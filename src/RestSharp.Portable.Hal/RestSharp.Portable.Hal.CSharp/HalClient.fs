@@ -1,6 +1,7 @@
 ﻿namespace RestSharp.Portable.Hal.CSharp
 
 open RestSharp.Portable.Hal
+open RestSharp.Portable.Hal.Helpers
 open System.Collections.Generic
 open System.Threading.Tasks
 open System.Reflection
@@ -54,18 +55,28 @@ and
     member this.PutAsyncAndParse<'T> data =  inner.PutAsyncAndParse<'T> data |> Async.StartAsTask
     member this.DeleteAsyncAndParse<'T> data = inner.DeleteAsyncAndParse<'T> data |> Async.StartAsTask
 
-    member this.UrlSegments (segments:System.Object) = 
-        let properties = getAnonymousValues segments
+
+    member private this.urlSegmentsHelper (segments:System.Object) toCamelCase = 
+        let properties = 
+            getAnonymousValues segments |> StringHelpers.convertToCamelCase toCamelCase
+
         RequestContext (inner.UrlSegments(properties))
+
+    member this.UrlSegments (segments, toCamelCase) = 
+        this.urlSegmentsHelper segments toCamelCase
     
+    member this.UrlSegments segments = 
+        this.UrlSegments (segments, false)
+
     member this.Follow (rel:string) = 
         RequestContext(inner.Follow rel)
 
     member this.Follow ([<ParamArray>] rels: string array) = 
         RequestContext (inner.Follow(List.ofArray rels))
-    member this.Follow (rel:string, segments:System.Object) = 
-        let properties = getAnonymousValues segments
+    member this.Follow (rel:string, segments:System.Object, toCamelCase) = 
+        let properties = getAnonymousValues segments |> StringHelpers.convertToCamelCase toCamelCase
         RequestContext (inner.Follow(rel, properties))
+    member this.Follow (rel:string, segments:System.Object) = this.Follow (rel, segments, false)
 
     member this.FollowHeader(path:string) =
         RequestContext(inner.FollowHeader path)
