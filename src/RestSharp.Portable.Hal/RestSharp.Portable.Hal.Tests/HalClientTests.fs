@@ -308,5 +308,51 @@ type HalTests() =
 
         nr.id === 0
 
-    
+    [<Test>]
+    member test.``should follow from resource``() = 
+        //i.e. from resource response, should be able to continue traversal
+        let resource = 
+            client.From("api/cardholders")
+                .GetAsync() |> Async.RunSynchronously
+        let next = resource.Follow("register")
+                    .GetAsync<RegistrationForm>() |> Async.RunSynchronously
+        
+        next.id === -1
+
+    [<Test>]
+    member test.``should follow with segments from resource``() = 
+        //i.e. from resource response, should be able to continue traversal
+        let resource = 
+            client.From("api/cardholders").GetAsync() |> Async.RunSynchronously
+        let next =
+                resource
+                    .Follow("cardholder", ["id" => "123"])
+                    .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
+        
+        let expected = {
+            CardHolderDetails.id = 123;
+            name = "Customer Number123";
+            anotherCard = { idAgain = "again" }
+        }
+
+        next === expected     
+        
+    [<Test>]
+    member test.``should follow multiple times with segments from resource``() = 
+        //i.e. from resource response, should be able to continue traversal
+        let resource = 
+            client.From("api/cardholders").GetAsync() |> Async.RunSynchronously
+        let next =
+                resource
+                    .Follow("cardholder", ["id" => "123"])
+                    .GetAsync() |> Async.RunSynchronously
+        let next2 = next.Follow("self").GetAsync<CardHolderDetails>() |> Async.RunSynchronously
+        
+        let expected = {
+            CardHolderDetails.id = 123;
+            name = "Customer Number123";
+            anotherCard = { idAgain = "again" }
+        }
+
+        next2 === expected         
     

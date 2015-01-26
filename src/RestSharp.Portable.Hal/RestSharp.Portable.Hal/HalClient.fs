@@ -41,7 +41,7 @@ module Client =
         member this.FollowHeader (header:string) : RequestContext =
             this.response.Headers.GetValues(header) |> Seq.head |> this.requestContext.FollowHeader
        
-        member this.Follow (next:Follow) rest : RequestContext = 
+        member this.ApplyFollows (next:Follow) rest : RequestContext = 
             let (nextUrl, nextUrlSegments) = 
                 match next with
                 | LinkFollow(rel, segments) -> this.data.["_links"].[rel].Value<string>("href") , segments
@@ -57,8 +57,13 @@ module Client =
 
             {this.requestContext with requestParameters = newRequestParameters}
 
+        member this.Follow (rel:string, urlSegments: (string*string) list) : RequestContext =
+            this.ApplyFollows (LinkFollow(rel, urlSegments|> getUrlSegments)) []
+        
+        member this.Follow (rel:string) : RequestContext = 
+            this.ApplyFollows (LinkFollow(rel, [])) []
 
-
+        
         member this.Links = 
             this.data.["_links"]
 
@@ -129,7 +134,7 @@ module Client =
                         let embedded = RequestContext.getEmbeddedResource resource.Embedded x
                         match embedded with
                         | None -> 
-                            let newRequest : RequestContext = resource.Follow x xs
+                            let newRequest : RequestContext = resource.ApplyFollows x xs
                             newRequest.GetAsync() |> Async.RunSynchronously
                         | Some jt -> 
                             let rp = {resource.requestContext.requestParameters with follow = xs }
