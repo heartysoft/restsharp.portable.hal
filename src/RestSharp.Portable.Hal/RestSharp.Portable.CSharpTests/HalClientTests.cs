@@ -350,5 +350,67 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual(101, resource.Id);
             Assert.AreEqual("12345578778", resource.CardNumber);
         }
+
+        [Test]
+        public void should_follow_from_resource()
+        {
+            var resource =
+                _client.From("api/cardholders")
+                    .GetAsync().Result;
+            var next = resource.Follow("register").GetAsync<RegistrationForm>().Result;
+
+            Assert.AreEqual(-1, next.Id);
+        }
+
+        [Test]
+        public void should_follow_with_segments_from_resource()
+        {
+            var resource =
+                 _client.From("api/cardholders")
+                     .GetAsync().Result;
+            var next = resource.Follow("cardholder", new{id=123}).GetAsync<CardHolderDetails>().Result;
+
+            Assert.AreEqual(123, next.Id);
+            Assert.AreEqual("Customer Number123",next.Name);
+            Assert.AreEqual("again", next.AnotherCard.IdAgain);
+        }
+
+    //[<Test>]
+    //member test.``should follow with segments from resource``() = 
+    //    //i.e. from resource response, should be able to continue traversal
+    //    let resource = 
+    //        client.From("api/cardholders").GetAsync() |> Async.RunSynchronously
+    //    let next =
+    //            resource
+    //                .Follow("cardholder", ["id" => "123"])
+    //                .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
+        
+    //    let expected = {
+    //        CardHolderDetails.id = 123;
+    //        name = "Customer Number123";
+    //        anotherCard = { idAgain = "again" }
+    //    }
+
+    //    next === expected     
+        
+    //[<Test>]
+    //member test.``should follow multiple times with segments from resource``() = 
+    //    //i.e. from resource response, should be able to continue traversal
+    //    let resource = 
+    //        client.From("api/cardholders").GetAsync() |> Async.RunSynchronously
+    //    let next =
+    //            resource
+    //                .Follow("cardholder", ["id" => "123"])
+    //                .GetAsync() |> Async.RunSynchronously
+    //    let next2 = next.Follow("self").GetAsync<CardHolderDetails>() |> Async.RunSynchronously
+        
+    //    let expected = {
+    //        CardHolderDetails.id = 123;
+    //        name = "Customer Number123";
+    //        anotherCard = { idAgain = "again" }
+    //    }
+
+    //    next2 === expected         
+    
     }
 }

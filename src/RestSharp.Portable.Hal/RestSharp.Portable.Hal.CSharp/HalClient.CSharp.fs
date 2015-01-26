@@ -2,6 +2,7 @@
 
 open RestSharp.Portable.Hal
 open RestSharp.Portable.Hal.Helpers
+open RestSharp.Portable.Hal.CSharp.Helpers
 open System.Collections.Generic
 open System.Threading.Tasks
 open System.Reflection
@@ -15,21 +16,19 @@ type Resource internal (inner:Client.Resource, requestContext:RequestContext) =
     member this.Embedded = inner.Embedded
     member this.Links = inner.Links
     member this.FollowHeader header = inner.response.Headers.GetValues(header) |> Seq.head |> requestContext.FollowHeader
-    
+    member this.Follow (rel:string) = RequestContext (inner.Follow(rel))
+    member this.Follow (rel:string, segments:System.Object, toCamelCase) = 
+      let properties = getAnonymousValues segments |> StringHelpers.convertToCamelCase toCamelCase
+      RequestContext (inner.Follow(rel, properties))
+    member this.Follow (rel:string, segments:System.Object) = this.Follow (rel, segments, false)
+
 //    member this.Follow ([<ParamArray>] rels: string array) = 
 //        RequestContext (inner.Follow(List.ofArray rels))
-//    member this.Follow (rel:string, segments:System.Object, toCamelCase) = 
-//        let properties = getAnonymousValues segments |> StringHelpers.convertToCamelCase toCamelCase
-//        RequestContext (inner.Follow(rel, properties))
-//    member this.Follow (rel:string, segments:System.Object) = this.Follow (rel, segments, false)
     
 and
     RequestContext internal (inner:Client.RequestContext) = 
 
-    let getAnonymousValues (obj:System.Object) = 
-            obj.GetType().GetRuntimeProperties()
-            |> Seq.map (fun o -> o.Name => o.GetValue(obj))
-            |> List.ofSeq
+    
 
     member this.GetAsync () = 
         let work = async {
