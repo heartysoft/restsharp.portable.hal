@@ -5,6 +5,7 @@ open System.Runtime.CompilerServices
 
 [<AutoOpen>]
 module Client =
+    open RestSharp.Portable.Hal.Helpers
 
     [<MethodImpl(MethodImplOptions.NoInlining)>] //reflection used. if inlined, non portable clients break.
     let (=>) (left:string) (right:System.Object) =
@@ -55,6 +56,8 @@ module Client =
                 }
 
             {this.requestContext with requestParameters = newRequestParameters}
+
+
 
         member this.Links = 
             this.data.["_links"]
@@ -187,22 +190,9 @@ module Client =
         member this.PutAsyncAndParse data  = this.submitAsyncAndParse System.Net.Http.HttpMethod.Put data
         member this.DeleteAsyncAndParse data  = this.submitAsyncAndParse System.Net.Http.HttpMethod.Delete data
 
-        member private this.getUrlSegments(urlSegments: (string*string) list) : Parameter list = 
-            let segments = 
-                urlSegments 
-                |> List.map (
-                    fun (k, v) -> 
-                        let p = new Parameter()
-                        p.Name <- k
-                        p.Value <- v
-                        p.Type <- ParameterType.UrlSegment
-                        p
-                    )
-            segments
-
         member this.Follow (rel:string, urlSegments: (string*string) list) : RequestContext =
             let rp = this.requestParameters
-            let segments = this.getUrlSegments urlSegments
+            let segments = getUrlSegments urlSegments
 
             let newRp = {rp with follow = rp.follow @ [LinkFollow(rel, segments)]}
             {this with requestParameters = newRp}
@@ -223,7 +213,7 @@ module Client =
 
         member this.UrlSegments (urlSegments: (string*string) list) : RequestContext = 
            let rp = this.requestParameters
-           let segments = this.getUrlSegments urlSegments
+           let segments = getUrlSegments urlSegments
            let newRp = {rp with urlSegments = rp.urlSegments @ segments}
            {this with requestParameters = newRp} 
 

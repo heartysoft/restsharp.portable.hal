@@ -50,6 +50,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
   </Target>
   <ItemGroup>
+    <Compile Include="ParameterHelpers.fs" />
     <Compile Include="StringHelpers.fs" />
     <Compile Include="HalClient.fs" />
     <Compile Include="SolutionInfo.fs" />
@@ -73,7 +74,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="RestSharp.Portable">
-      <HintPath>..\packages\FubarCoder.RestSharp.Portable.2.2.0-pre3\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+MonoTouch10+Xamarin.iOS10\RestSharp.Portable.dll</HintPath>
+      <HintPath>..\packages\FubarCoder.RestSharp.Portable.2.2.0\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+MonoTouch10+Xamarin.iOS10\RestSharp.Portable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http">

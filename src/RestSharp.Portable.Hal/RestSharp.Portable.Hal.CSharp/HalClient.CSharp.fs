@@ -15,6 +15,14 @@ type Resource internal (inner:Client.Resource, requestContext:RequestContext) =
     member this.Embedded = inner.Embedded
     member this.Links = inner.Links
     member this.FollowHeader header = inner.response.Headers.GetValues(header) |> Seq.head |> requestContext.FollowHeader
+    
+//    member this.Follow ([<ParamArray>] rels: string array) = 
+//        RequestContext (inner.Follow(List.ofArray rels))
+//    member this.Follow (rel:string, segments:System.Object, toCamelCase) = 
+//        let properties = getAnonymousValues segments |> StringHelpers.convertToCamelCase toCamelCase
+//        RequestContext (inner.Follow(rel, properties))
+//    member this.Follow (rel:string, segments:System.Object) = this.Follow (rel, segments, false)
+    
 and
     RequestContext internal (inner:Client.RequestContext) = 
 
