@@ -45,8 +45,6 @@ type Resource internal (inner:Client.Resource, requestContext:RequestContext) =
 and
     RequestContext internal (inner:Client.RequestContext) = 
 
-    
-
     member this.GetAsync () = 
         let work = async {
             let! result = inner.GetAsync()
@@ -56,29 +54,6 @@ and
     
     member this.GetAsync<'T> () = 
         inner.GetAsync<'T>() |> Async.StartAsTask
-
-    member private this.submitAsync (``method``:string) data = 
-        let work = async{
-            let handler = 
-                match ``method`` with
-                | "POST" -> inner.PostAsync
-                | "PUT" -> inner.PutAsync
-                | "DELETE" -> inner.DeleteAsync
-                | _ -> failwith(System.String.Format("unsupported method {0}", ``method``))
-
-            let! res = handler data
-            return Resource(res, this)
-        }
-        work |> Async.StartAsTask
-    
-    member this.PostAsync data = this.submitAsync "POST" data
-    member this.PutAsync data = this.submitAsync "PUT" data
-    member this.DeleteAsync data = this.submitAsync "DELETE" data
-
-    member this.PostAsyncAndParse<'T> data = inner.PostAsyncAndParse<'T> data |> Async.StartAsTask
-    member this.PutAsyncAndParse<'T> data =  inner.PutAsyncAndParse<'T> data |> Async.StartAsTask
-    member this.DeleteAsyncAndParse<'T> data = inner.DeleteAsyncAndParse<'T> data |> Async.StartAsTask
-
 
     member private this.urlSegmentsHelper (segments:System.Object) toCamelCase = 
         let properties = 

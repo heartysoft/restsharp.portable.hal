@@ -220,90 +220,12 @@ namespace RestSharp.Portable.CSharpTests
         }
 
         [Test]
-        public void should_post_form_to_server()
-        {
-            var newData = new RegistrationForm {Id = 55, Name = "Johny"};
-            var resource =
-                _client.From("/api/cardholders")
-                    .Follow("register")
-                    .PostAsync(newData)
-                    .Result;
-
-            Assert.AreEqual(HttpStatusCode.Created, resource.Response.StatusCode);
-
-            var location = resource.Response.Headers.GetValues("Location").First();
-            Assert.AreEqual("/api/cardholders/55", location);
-        }
-
-        [Test]
-        public void should_post_form_to_server_and_parse_body_if_you_want()
-        {
-            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
-            var resource =
-                _client.From("/api/cardholders")
-                    .Follow("register")
-                    .PostAsync(newData)
-                    .Result;
-
-            var body = resource.Parse<CardHolderDetails>();
-
-            Assert.AreEqual("Johny", body.Name);
-            Assert.AreEqual("lala", body.AnotherCard.IdAgain);
-        }
-
-        [Test]
-        public void should_post_form_to_server_and_parse_body_nicely_if_you_want()
-        {
-            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
-            var resource =
-                _client.From("/api/cardholders")
-                    .Follow("register")
-                    .PostAsyncAndParse<CardHolderDetails>(newData)
-                    .Result;
-
-            Assert.AreEqual("Johny", resource.Name);
-            Assert.AreEqual("lala", resource.AnotherCard.IdAgain);
-        }
-
-        [Test]
-        public void should_put_to_server()
-        {
-            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
-            var resource =
-                _client.From("/api/cardholders")
-                    .Follow("register")
-                    .PutAsync(newData)
-                    .Result;
-
-            Assert.AreEqual(HttpStatusCode.Created, resource.Response.StatusCode);
-
-            var location = resource.Response.Headers.GetValues("Location").First();
-            Assert.AreEqual("/api/cardholders/55", location);
-        }
-
-        [Test]
-        public void should_delete_to_server()
-        {
-            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
-            var resource =
-                _client.From("/api/cardholders")
-                    .Follow("register")
-                    .DeleteAsync(newData)
-                    .Result;
-
-            Assert.AreEqual(HttpStatusCode.OK, resource.Response.StatusCode);
-
-            var location = resource.Response.Headers.GetValues("Location").First();
-            Assert.AreEqual("/api/cardholders", location);
-        }
-
-        [Test]
         public void should_follow_location_header()
         {
             var newData = new RegistrationForm { Id = 55, Name = "Johny" };
             var resource =
                 _client.From("/api/cardholders")
-                    .Follow("register")
+                    .Follow("register").GetAsync().Result
                     .PostAsync(newData)
                     .Result;
 
@@ -319,7 +241,7 @@ namespace RestSharp.Portable.CSharpTests
             var newData = new RegistrationForm { Id = 55, Name = "Johny" };
             var resource =
                 _client.From("/api/cardholders")
-                    .Follow("register")
+                    .Follow("register").GetAsync().Result
                     .PostAsync(newData)
                     .Result;
 
@@ -377,7 +299,7 @@ namespace RestSharp.Portable.CSharpTests
         }
 
         [Test]
-        public async Task should_post_from_resource()
+        public async Task should_submit_post_from_resource()
         {
             var newData = new RegistrationForm { Id = 55, Name = "Johny" };
             var form = await 
@@ -393,7 +315,7 @@ namespace RestSharp.Portable.CSharpTests
         }
 
         [Test]
-        public async Task should_put_to_server_from_resource()
+        public async Task should_submit_put_to_server_from_resource()
         {
             var newData = new RegistrationForm { Id = 55, Name = "Johny" };
             var form =
@@ -408,7 +330,7 @@ namespace RestSharp.Portable.CSharpTests
         }
 
         [Test]
-        public async Task should_delete_to_server_from_resource()
+        public async Task should_submit_delete_from_resource()
         {
             var newData = new RegistrationForm { Id = 55, Name = "Johny" };
             var form =
