@@ -217,75 +217,14 @@ type HalTests() =
         merged.["_embedded"] |> should be Null
 
     [<Test>]
-    member test.``should post form to server`` () = 
-        let newData = {RegistrationForm.id = 55; name="Johny"}
-        let resource = 
-            client.From("api/cardholders")
-                .Follow("register")
-                .PostAsync(newData) |> Async.RunSynchronously
-       
-        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-
-        resource.response.StatusCode === HttpStatusCode.Created
-        locationHeader === "/api/cardholders/55"
-
-    [<Test>]
-    member test.``should post form to server and parse body (if you want)`` () = 
-        let newData = {RegistrationForm.id = 55; name="Johny"}
-        let resource = 
-            client.From("api/cardholders")
-                .Follow("register")
-                .PostAsync(newData) |> Async.RunSynchronously
-
-        let body = resource.Parse<CardHolderDetails>()
-        
-        body.name === "Johny"
-        body.anotherCard.idAgain === "lala"
-
-    [<Test>]
-    member test.``should post form to sever and parse body nicely (if you want)`` () = 
-        let newData = {RegistrationForm.id = 55; name="Johny"}
-        let resource = 
-            client.From("api/cardholders")
-                .Follow("register")
-                .PostAsyncAndParse<CardHolderDetails>(newData) |> Async.RunSynchronously
-
-        resource.name === "Johny"
-        resource.anotherCard.idAgain === "lala"
-
-    [<Test>]
-    member test.``should put to server`` () =
-        let newData = {RegistrationForm.id = 55; name="Johny"}
-        let resource = 
-            client.From("api/cardholders")
-                .Follow("register")
-                .PutAsync(newData) |> Async.RunSynchronously
-
-        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-
-        resource.response.StatusCode === HttpStatusCode.Created
-        locationHeader === "/api/cardholders/55"
-
-    [<Test>]
-    member test.``should delete to server`` () =
-        let newData = {RegistrationForm.id = 55; name="Johny"}
-        let resource = 
-            client.From("api/cardholders")
-                .Follow("register")
-                .DeleteAsync(newData) |> Async.RunSynchronously
-        
-        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
-
-        resource.response.StatusCode === HttpStatusCode.OK
-        locationHeader === "/api/cardholders" 
-
-    [<Test>]
     member test.``should follow location header`` () =
         let newData = {RegistrationForm.id = 55; name="Johny"}
         let resource = 
-            client.From("api/cardholders")
-                .Follow("register")
-                .PostAsync(newData) |> Async.RunSynchronously                              
+            async{
+                let! form = client.From("api/cardholders")
+                                .Follow("register").GetAsync()
+                return! form.PostAsync(newData)             
+            } |> Async.RunSynchronously
 
         let nr = 
             resource.FollowHeader("Location")
@@ -297,15 +236,18 @@ type HalTests() =
     [<Test>]
     member test.``should follow location header and continue traversal`` () =
         let newData = {RegistrationForm.id = 55; name="Johny"}
-        let resource = 
-            client.From("api/cardholders")
-                .Follow("register")
-                .PostAsync(newData) |> Async.RunSynchronously                              
-
         let nr = 
-            resource.FollowHeader("Location")
-                .Follow("updatecardholder")
-                .GetAsync<UpdateCardHolderForm>() |> Async.RunSynchronously
+            async{
+                let! form = 
+                    client.From("api/cardholders")
+                        .Follow("register").GetAsync()
+                let! resource = form.PostAsync(newData)
+
+                return!
+                    resource.FollowHeader("Location")
+                        .Follow("updatecardholder")
+                        .GetAsync<UpdateCardHolderForm>()
+            } |> Async.RunSynchronously
 
         nr.id === 0
 

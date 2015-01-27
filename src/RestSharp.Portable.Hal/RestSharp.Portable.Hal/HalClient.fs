@@ -153,43 +153,6 @@ module Client =
 
             }
 
-        member private this.submitAsync (``method`` : System.Net.Http.HttpMethod) data : Async<Resource> =
-            async {
-                let! resource = this.GetAsync()
-                let form = resource.data
-                let merged = merge form data
-                let url = resource.Links.["self"].Value<string>("href")
-
-                let client = resource.requestContext.environment.client
-                let restRequest = 
-                    RestRequest(url, ``method``)
-                        .AddJsonBody(merged) 
-                
-                let parameters = this.environment.headers @ this.requestParameters.urlSegments
-
-                let req = 
-                    parameters
-                    |> List.fold (fun (state:IRestRequest) p -> state.AddParameter(p)) restRequest 
-
-                let! response = client.Execute(req) |> Async.AwaitTask
-
-                return {Resource.data = parse(response); Resource.response = response; Resource.requestContext = resource.requestContext}
-            }
-
-        member private this.submitAsyncAndParse<'T> (``method`` : System.Net.Http.HttpMethod) data : Async<'T> = 
-            async {
-                let! resource = this.submitAsync ``method`` data
-                return resource.Parse<'T>()
-            }
-
-        member this.PostAsync data =  this.submitAsync System.Net.Http.HttpMethod.Post data
-        member this.PutAsync data =  this.submitAsync System.Net.Http.HttpMethod.Put data
-        member this.DeleteAsync data =  this.submitAsync System.Net.Http.HttpMethod.Delete data
-        
-        member this.PostAsyncAndParse data  = this.submitAsyncAndParse System.Net.Http.HttpMethod.Post data
-        member this.PutAsyncAndParse data  = this.submitAsyncAndParse System.Net.Http.HttpMethod.Put data
-        member this.DeleteAsyncAndParse data  = this.submitAsyncAndParse System.Net.Http.HttpMethod.Delete data
-
         member this.Follow (rel:string, urlSegments: (string*string) list) : RequestContext =
             let rp = this.requestParameters
             let segments = getUrlSegments urlSegments
