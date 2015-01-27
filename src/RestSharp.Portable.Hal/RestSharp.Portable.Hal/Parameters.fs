@@ -6,6 +6,6 @@ type Follow =
         | HeaderFollow of string
     and 
         RequestParameters = { rootUrl : string; follow: Follow list; urlSegments : Parameter list; }
-    and
-        EnvironmentParameters = { client : RestClient; headers : Parameter list; httpClientFactory : IHttpClientFactory option }
+   
+type EnvironmentParameters = { client : RestClient; headers : Parameter list; httpClientFactory : IHttpClientFactory option }
 
