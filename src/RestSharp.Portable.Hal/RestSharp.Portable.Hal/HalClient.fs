@@ -56,7 +56,7 @@ module Client =
             async {
                 let form = this.data
                 let merged = merge form newData
-                let url = this.Links.["self"].Value<string>("href")
+                let url = this.Links.["self"].Value<string>("href")//TODO: fallback or maybe prefer response.uri
 
                 let client = this.requestContext.environment.client
                 let restRequest = 

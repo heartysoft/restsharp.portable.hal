@@ -10,6 +10,7 @@ using RestSharp.Portable.CSharpTests;
 using RestSharp.Portable.Hal.CSharp;
 using RestSharp.Portable.HttpClientImpl;
 using Simple.Data.Extensions;
+using System.Threading.Tasks;
 
 namespace RestSharp.Portable.CSharpTests
 {
@@ -33,7 +34,7 @@ namespace RestSharp.Portable.CSharpTests
     }
     
     [TestFixture]
-    public class HalClientTests
+    public class HalClientCSharpTests
     {
 
         private HalClient _client;
@@ -375,42 +376,50 @@ namespace RestSharp.Portable.CSharpTests
             Assert.AreEqual("again", next.AnotherCard.IdAgain);
         }
 
-    //[<Test>]
-    //member test.``should follow with segments from resource``() = 
-    //    //i.e. from resource response, should be able to continue traversal
-    //    let resource = 
-    //        client.From("api/cardholders").GetAsync() |> Async.RunSynchronously
-    //    let next =
-    //            resource
-    //                .Follow("cardholder", ["id" => "123"])
-    //                .GetAsync<CardHolderDetails>() |> Async.RunSynchronously
-        
-    //    let expected = {
-    //        CardHolderDetails.id = 123;
-    //        name = "Customer Number123";
-    //        anotherCard = { idAgain = "again" }
-    //    }
+        [Test]
+        public async Task should_post_from_resource()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var form = await 
+                _client.From("/api/cardholders")
+                    .Follow("register").GetAsync();
+            //use form data, etc.
+            var resource = await form.PostAsync(newData);
 
-    //    next === expected     
-        
-    //[<Test>]
-    //member test.``should follow multiple times with segments from resource``() = 
-    //    //i.e. from resource response, should be able to continue traversal
-    //    let resource = 
-    //        client.From("api/cardholders").GetAsync() |> Async.RunSynchronously
-    //    let next =
-    //            resource
-    //                .Follow("cardholder", ["id" => "123"])
-    //                .GetAsync() |> Async.RunSynchronously
-    //    let next2 = next.Follow("self").GetAsync<CardHolderDetails>() |> Async.RunSynchronously
-        
-    //    let expected = {
-    //        CardHolderDetails.id = 123;
-    //        name = "Customer Number123";
-    //        anotherCard = { idAgain = "again" }
-    //    }
+            Assert.AreEqual(HttpStatusCode.Created, resource.Response.StatusCode);
 
-    //    next2 === expected         
-    
+            var location = resource.Response.Headers.GetValues("Location").First();
+            Assert.AreEqual("/api/cardholders/55", location);
+        }
+
+        [Test]
+        public async Task should_put_to_server_from_resource()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var form =
+                await _client.From("/api/cardholders")
+                    .Follow("register").GetAsync();
+            var resource = await form.PutAsync(newData);
+
+            Assert.AreEqual(HttpStatusCode.Created, resource.Response.StatusCode);
+
+            var location = resource.Response.Headers.GetValues("Location").First();
+            Assert.AreEqual("/api/cardholders/55", location);
+        }
+
+        [Test]
+        public async Task should_delete_to_server_from_resource()
+        {
+            var newData = new RegistrationForm { Id = 55, Name = "Johny" };
+            var form =
+                await _client.From("/api/cardholders")
+                    .Follow("register").GetAsync();
+            var resource = await form.DeleteAsync(newData);
+
+            Assert.AreEqual(HttpStatusCode.OK, resource.Response.StatusCode);
+
+            var location = resource.Response.Headers.GetValues("Location").First();
+            Assert.AreEqual("/api/cardholders", location);
+        }
     }
 }

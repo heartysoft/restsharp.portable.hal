@@ -22,6 +22,23 @@ type Resource internal (inner:Client.Resource, requestContext:RequestContext) =
       RequestContext (inner.Follow(rel, properties))
     member this.Follow (rel:string, segments:System.Object) = this.Follow (rel, segments, false)
 
+    member private this.submitAsync (``method``:string) data = 
+        let work = async{
+            let handler = 
+                match ``method`` with
+                | "POST" -> inner.PostAsync
+                | "PUT" -> inner.PutAsync
+                | "DELETE" -> inner.DeleteAsync
+                | _ -> failwith(System.String.Format("unsupported method {0}", ``method``))
+
+            let! res = handler data
+            return Resource(res, requestContext)
+        }
+        work |> Async.StartAsTask
+
+    member this.PostAsync data = this.submitAsync "POST" data
+    member this.PutAsync data = this.submitAsync "PUT" data
+    member this.DeleteAsync data = this.submitAsync "DELETE" data
 //    member this.Follow ([<ParamArray>] rels: string array) = 
 //        RequestContext (inner.Follow(List.ofArray rels))
     
