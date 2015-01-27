@@ -369,5 +369,54 @@ type HalTests() =
         let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
 
         resource.response.StatusCode === HttpStatusCode.Created
-        locationHeader === "/api/cardholders/55"     
+        locationHeader === "/api/cardholders/55" 
+
+    [<Test>]
+    member test.``should be able to post from fetched resource (async example)``() = 
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        
+        let finalResult = 
+            async{
+                let! form = 
+                    client.From("api/cardholders")
+                             .Follow("register").GetAsync() 
+                //let formData = form.Parse<>() # use parsed data
+
+                let! postResult = form.PostAsync(newData)
+                return postResult
+            } |> Async.RunSynchronously
+
+        let locationHeader = finalResult.response.Headers.GetValues "Location" |> Seq.head
+        
+        locationHeader === "/api/cardholders/55"
+        finalResult.response.StatusCode === HttpStatusCode.Created 
     
+    [<Test>]
+    member test.``should put to server from resource`` () =
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource = 
+            async {
+                let! form = 
+                    client.From("api/cardholders")
+                        .Follow("register").GetAsync()
+                return! form.PutAsync(newData) 
+            } |> Async.RunSynchronously
+
+        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
+
+        resource.response.StatusCode === HttpStatusCode.Created
+        locationHeader === "/api/cardholders/55"
+
+    [<Test>]
+    member test.``should delete to server from resource`` () =
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let resource =
+            async{ 
+                let! form = client.From("api/cardholders")
+                                .Follow("register").GetAsync()
+                return! form.DeleteAsync(newData) }|> Async.RunSynchronously
+        
+        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
+
+        resource.response.StatusCode === HttpStatusCode.OK
+        locationHeader === "/api/cardholders" 

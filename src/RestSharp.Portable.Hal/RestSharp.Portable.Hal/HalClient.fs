@@ -6,6 +6,7 @@ open System.Runtime.CompilerServices
 [<AutoOpen>]
 module Client =
     open RestSharp.Portable.Hal.Helpers
+    open System.Net.Http
 
     [<MethodImpl(MethodImplOptions.NoInlining)>] //reflection used. if inlined, non portable clients break.
     let (=>) (left:string) (right:System.Object) =
@@ -14,6 +15,13 @@ module Client =
     
     type Resource = 
         { requestContext : RequestContext; response : IRestResponse; data: JObject}
+        
+        member this.Links = 
+            this.data.["_links"]
+
+        member this.Embedded = 
+             this.data.["_embedded"]
+        
         member this.Parse<'T>() = 
             this.data.ToObject<'T>()
 
@@ -44,33 +52,36 @@ module Client =
         member this.Follow (rel:string) : RequestContext = 
             this.ApplyFollows (LinkFollow(rel, [])) []
 
-        member this.PostAsync data = 
-            this.Follow("self").PostAsync data
-        
-        member this.Links = 
-            this.data.["_links"]
+        member private this.submitAsync (``method`` : System.Net.Http.HttpMethod) newData : Async<Resource> =
+            async {
+                let form = this.data
+                let merged = merge form newData
+                let url = this.Links.["self"].Value<string>("href")
 
-        member this.Embedded = 
-             this.data.["_embedded"]
+                let client = this.requestContext.environment.client
+                let restRequest = 
+                    RestRequest(url, ``method``)
+                        .AddJsonBody(merged) 
+                
+                let parameters = this.requestContext.environment.headers @ this.requestContext.requestParameters.urlSegments
+
+                let req = 
+                    parameters
+                    |> List.fold (fun (state:IRestRequest) p -> state.AddParameter(p)) restRequest 
+
+                let! response = client.Execute(req) |> Async.AwaitTask
+
+                return {Resource.data = parse(response); Resource.response = response; Resource.requestContext = this.requestContext}
+            }
+
+        member this.PostAsync newData = 
+            this.submitAsync HttpMethod.Post newData
+        member this.PutAsync data =  this.submitAsync System.Net.Http.HttpMethod.Put data
+        member this.DeleteAsync data =  this.submitAsync System.Net.Http.HttpMethod.Delete data 
+
     and
         RequestContext = 
         { environment: EnvironmentParameters; requestParameters : RequestParameters}
-        member private this.parse (response:IRestResponse) : JObject = 
-            let encodingStr = 
-    //HOLY KRAP BATMAN...WHY Contains throw exceptionz?!?!?!
-    //            match this.response.Headers.Contains("Content-Encoding") with
-    //            | true -> 
-    //                this.response.Headers.GetValues("Content-Encoding")
-    //                |> Seq.head
-    //            | _ -> 
-                "UTF-8"
-                             
-            let encoding = System.Text.Encoding.GetEncoding encodingStr
-            let str = encoding.GetString(response.RawBytes, 0, response.RawBytes.Length)
-            
-            match str with
-            | "" -> null 
-            | _ -> JObject.Parse(str)
 
         member private this.getResponse () : Async<Resource> = 
             async {
@@ -90,7 +101,7 @@ module Client =
 
                 let! res = client.Execute(req) |> Async.AwaitTask
 
-                let data = this.parse(res)
+                let data = parse(res)
                 return { Resource.requestContext = this; response = res; data=data}
             } 
 
@@ -139,6 +150,7 @@ module Client =
             async{
                 let! response = this.GetAsync()
                 return response.Parse<'T>()
+
             }
 
         member private this.submitAsync (``method`` : System.Net.Http.HttpMethod) data : Async<Resource> =
@@ -161,7 +173,7 @@ module Client =
 
                 let! response = client.Execute(req) |> Async.AwaitTask
 
-                return {Resource.data = this.parse(response); Resource.response = response; Resource.requestContext = resource.requestContext}
+                return {Resource.data = parse(response); Resource.response = response; Resource.requestContext = resource.requestContext}
             }
 
         member private this.submitAsyncAndParse<'T> (``method`` : System.Net.Http.HttpMethod) data : Async<'T> = 
