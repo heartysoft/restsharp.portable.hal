@@ -93,8 +93,8 @@ type HalClient internal (inner:Client.HalClient) =
         inner.From domain
         |> fun rc -> RequestContext(rc)
 
-type HalClientFactory private (inner: Client.HalClientFactory) = 
-    new() = HalClientFactory(Client.HalClientFactory())
+type HalClientFactory private (inner: Factories.HalClientFactory) = 
+    new() = HalClientFactory(Factories.HalClientFactory())
 
     member this.Header k v =
         inner.Header k v

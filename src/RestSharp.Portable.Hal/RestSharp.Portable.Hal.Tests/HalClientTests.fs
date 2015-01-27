@@ -3,6 +3,7 @@
 open NUnit.Framework
 open FsUnit
 open RestSharp.Portable.Hal
+open RestSharp.Portable.Hal.Helpers
 open Newtonsoft.Json.Linq
 open System.Net
 open Microsoft.Owin
@@ -355,4 +356,18 @@ type HalTests() =
         }
 
         next2 === expected         
+
+    [<Test>]
+    member test.``should be able to post from fetched resource``() = 
+        let newData = {RegistrationForm.id = 55; name="Johny"}
+        let form = 
+            client.From("api/cardholders")
+                .Follow("register").GetAsync() |> Async.RunSynchronously
+        
+        let resource = form.PostAsync(newData) |> Async.RunSynchronously
+       
+        let locationHeader = resource.response.Headers.GetValues("Location") |> Seq.head
+
+        resource.response.StatusCode === HttpStatusCode.Created
+        locationHeader === "/api/cardholders/55"     
     

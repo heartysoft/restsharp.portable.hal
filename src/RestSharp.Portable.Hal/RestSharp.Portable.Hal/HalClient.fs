@@ -9,27 +9,8 @@ module Client =
 
     [<MethodImpl(MethodImplOptions.NoInlining)>] //reflection used. if inlined, non portable clients break.
     let (=>) (left:string) (right:System.Object) =
-        (left, System.Convert.ToString(right))
-
-    let merge (jo:JObject) data : JObject = 
-        let newJo = jo.DeepClone() :?> JObject
-        let newData = JObject.FromObject(data)
-        let mergeSettings = new JsonMergeSettings()
-        mergeSettings.MergeArrayHandling <- MergeArrayHandling.Replace
-
-        newJo.Merge(newData, mergeSettings) |> ignore
-        newJo.Remove("_links") |> ignore
-        newJo.Remove("_embedded") |> ignore
-
-        newJo
-
-    type Follow =
-        | LinkFollow of string * Parameter list
-        | HeaderFollow of string
-    and 
-        RequestParameters = { rootUrl : string; follow: Follow list; urlSegments : Parameter list; }
-    and
-        EnvironmentParameters = { client : RestClient; headers : Parameter list; httpClientFactory : IHttpClientFactory option }
+        (left, System.Convert.ToString(right))   
+    
     
     type Resource = 
         { requestContext : RequestContext; response : IRestResponse; data: JObject}
@@ -63,6 +44,8 @@ module Client =
         member this.Follow (rel:string) : RequestContext = 
             this.ApplyFollows (LinkFollow(rel, [])) []
 
+        member this.PostAsync data = 
+            this.Follow("self").PostAsync data
         
         member this.Links = 
             this.data.["_links"]
@@ -229,25 +212,7 @@ module Client =
                 requestParameters = {rootUrl = apiRelativeRoot; follow = []; urlSegments = []; }
             }
 
-    type HalClientFactory private (headers : Parameter list, httpClientFactory:IHttpClientFactory option) = 
-        new() = HalClientFactory([], None)
-        
-        member x.CreateHalClient(domain:string) : HalClient = 
-            HalClient({EnvironmentParameters.client = new RestClient(domain); headers = headers; httpClientFactory = httpClientFactory})
-
-        member x.HttpClientFactory httpClientFactory = 
-            HalClientFactory(headers, httpClientFactory)
-
-        member x.Header (key:string) (value:string) : HalClientFactory = 
-            let p = new Parameter()
-            p.Name <- key
-            p.Value <- value
-            p.Type <- ParameterType.HttpHeader
-
-            HalClientFactory(p :: headers, httpClientFactory)
-
-        member x.Accept(headerValue:string) = 
-            x.Header "Accept" headerValue
+    
 
 
 
