@@ -162,3 +162,5 @@ $RECYCLE.BIN/
 
 
 test-results/
+
+*.ide/
