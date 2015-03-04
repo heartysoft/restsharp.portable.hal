@@ -1,58 +1,11 @@
 ﻿module RestSharp.Portable.Hal.Tests
 
+open HalClientTestInfra
 open NUnit.Framework
 open FsUnit
-open RestSharp.Portable.Hal
-open RestSharp.Portable.Hal.Helpers
-open Newtonsoft.Json.Linq
 open System.Net
-open Microsoft.Owin
-open System
-open System.Net.Http
-open Microsoft.Owin.Hosting
-open Microsoft.Owin.Testing
-open RestSharp.Portable
-open RestSharp.Portable.HttpClientImpl
-
-type TestHttpClientFactory (server:TestServer) =
-    inherit DefaultHttpClientFactory() 
-    override this.CreateClient(restClient, request) : HttpClient = 
-        server.HttpClient
-    
-let rootUrl = "http://dummy-unused/"
-
-module TestConfig = 
-    let private server:TestServer = TestServer.Create<Hal.Startup>()
-    let CreateClient() = 
-        HalClientFactory()
-            .Accept("application/hal+json")
-            .HttpClientFactory(TestHttpClientFactory(server):> IHttpClientFactory |> Some)
-            .CreateHalClient rootUrl
-
-let inline (===) left = left |> should equal
-
-type RegistrationForm = {
-        id:int;
-        name:string
-    }
-
-type UpdateCardHolderForm = {
-        id:int;
-        name:string
-    }
-
-type Card = {idAgain:string}
-
-type CardHolderDetails = {
-        id:int; 
-        name:string;
-        anotherCard:Card
-    }
-
-type LoadCardForm = {amount:decimal; currency:string}
-
-type CardEmbedded = { number:int; ``type``:string }
-
+open Newtonsoft.Json.Linq
+open RestSharp.Portable.Hal.Helpers
 
 type HalTests() = 
 
@@ -176,32 +129,6 @@ type HalTests() =
         let expected = { CardEmbedded.number = 101; ``type``="mastercard" }
 
         resource === expected
-
-    [<Test>]
-    member test.``should get embedded resource`` () = 
-        let resource = 
-            client.From("api/cardholders")
-                .Follow("cardholder", ["id" => "112"])
-                .Follow("card")
-                .GetAsync<CardEmbedded>() |> Async.RunSynchronously
-        
-        let expected = { CardEmbedded.number = 101; ``type``="mastercard" }
-
-        resource === expected
-
-    [<Test>]
-    member test.``should follow link in embedded resource`` () = 
-        let resource = 
-            client.From("api/cardholders")
-                .Follow("cardholder", ["id" => "112"])
-                .Follow("card")
-                .Follow("loadcard")
-                .GetAsync<LoadCardForm>() |> Async.RunSynchronously
-        
-        let expected = { LoadCardForm.amount = 100M; currency="GBP" }
-       
-        resource === expected
-  
 
     [<Test>]
     member test.``merging forms`` () = 

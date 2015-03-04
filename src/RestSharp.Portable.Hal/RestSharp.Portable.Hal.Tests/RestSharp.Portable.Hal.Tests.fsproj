@@ -61,7 +61,9 @@
   </Target>
   <ItemGroup>
     <Compile Include="StringHelpersTests.fs" />
+    <Compile Include="HalClientTestInfra.fs" />
     <Compile Include="HalClientTests.fs" />
+    <Compile Include="HalClientEmbeddedTests.fs" />
     <Content Include="packages.config" />
     <Content Include="App.config" />
   </ItemGroup>
