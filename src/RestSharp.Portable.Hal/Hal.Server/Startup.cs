@@ -3,6 +3,8 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
 using CacheCow.Server;
+using Hal.Controllers;
+using Hal.ErrorHandling;
 using Microsoft.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -25,11 +27,12 @@ namespace Hal
 
             var jsonHalMediaTypeFormatter = new JsonHalMediaTypeFormatter();
             jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+            jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/xhtml"));
             jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/hal+json"));
             jsonHalMediaTypeFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"));
             jsonHalMediaTypeFormatter.SerializerSettings.NullValueHandling = NullValueHandling.Include;
             jsonHalMediaTypeFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-
+            
             config.Formatters.Add(jsonHalMediaTypeFormatter);
             config.Formatters.Add(new XmlHalMediaTypeFormatter());
 
@@ -48,6 +51,8 @@ namespace Hal
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            
+            config.Filters.Add(new ValidationFilter());
 
             app.UseWebApi(config);
             // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888

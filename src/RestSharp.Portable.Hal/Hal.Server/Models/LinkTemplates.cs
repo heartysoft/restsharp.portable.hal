@@ -1,3 +1,4 @@
+using System.Web.Http.Results;
 using WebApi.Hal;
 
 namespace Hal.Models
@@ -33,6 +34,12 @@ namespace Hal.Models
         public static class SearchLinks
         {
             public static Link Search { get { return new Link("search", "/api/search?&name={name}&id={id}&cardNumber={cardNumber}");} }
+        }
+
+        public static class WithErrorLinks
+        {
+            public static Link Root { get { return new Link("error", "/api/witherror");} }
+            public static Link Details { get { return new Link("error-details", "/api/witherror?&id={id}");} }
         }
     }
 }
