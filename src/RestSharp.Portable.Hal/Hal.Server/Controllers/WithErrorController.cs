@@ -23,7 +23,13 @@ namespace Hal.Controllers
                 throw new MyBusinessLogicException("My business logic exception message");
             }
 
-            throw new ValidationFailedException("Overall message", new[] {new ValidationError("Name", "Your name is a bit weird. Are you sure it's Yoda?"), new ValidationError("Age", "Yeah, right. You ain't 350 and I know it.")  });
+            throw new ValidationFailedException("Overall message", 
+                new[]
+                {
+                    new ValidationError("Name", "Your name is a bit weird. Are you sure it's Yoda?"),
+                    new ValidationError("Name", "Your name must be more than 4 characters...mwahhahahha....evil evil...lolz"),
+                    new ValidationError("Age", "Yeah, right. You ain't 350 and I know it.")
+                });
         }
 
         public class MyBusinessLogicException : Exception

@@ -23,8 +23,11 @@ type HalRemoteErrorTests() =
         
         match resource with
         | Choice2Of2 (:?RemoteValidationException as e) -> 
-             System.Console.WriteLine(e.ResponseBody)
-             Assert.Pass("Exception thrown")
+             e.Message === "Overall message"
+             e.Errors.["name"].[0] === "Your name is a bit weird. Are you sure it's Yoda?"
+             e.Errors.["age"].[0] === "Yeah, right. You ain't 350 and I know it."
+             e.Errors.Count === 2
+             e.TotalErrors() === 3
         | e -> Assert.Fail(sprintf "Did not throw expected exception. Got: %A" e) 
 
         

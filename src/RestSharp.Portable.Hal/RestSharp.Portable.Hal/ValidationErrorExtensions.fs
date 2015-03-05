@@ -5,7 +5,8 @@ module ValidationErrorExtensions =
     open RestSharp.Portable.Hal
     let parseValidationErrors (jo:JObject) : ValidationError =
         let message = jo.Value<string>("message")
-        {ValidationError.message = message; errors = Map.empty}
+        let errors = jo.["errors"].ToObject<Map<string, string list>>()
+        {ValidationError.message = message; errors = errors}
 
     ///Present to facilitate testing without PCL numptiness.
     let parseValidationErrorsFromBody (body:string) : ValidationError =

@@ -12,6 +12,9 @@ module RemoteErrors =
         member this.ResponseBody = body
         member this.AttemptedRequest = attemptedRequest
         member this.JSonBody = jo
+        member this.TotalErrors () = 
+            this.Errors
+            |> Seq.sumBy (fun x -> x.Value.Length)
 
     type UnexpectedResponseException(response:IRestResponse, body:string, jo:JObject, attemptedRequest:IRestRequest) = 
         inherit System.Exception("Unexpected response received.")
