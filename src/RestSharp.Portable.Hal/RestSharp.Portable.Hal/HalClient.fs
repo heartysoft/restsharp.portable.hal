@@ -14,7 +14,7 @@ module Client =
     
     
     type Resource = 
-        { requestContext : RequestContext; response : IRestResponse; data: JObject}
+        { requestContext : RequestContext; response : IRestResponse; data: JObject; body:string}
         
         member this.Links = 
             this.data.["_links"]
@@ -61,8 +61,8 @@ module Client =
                 let client = this.requestContext.environment.client
                 let restRequest = 
                     RestRequest(url, ``method``)
-                        .AddJsonBody(merged) 
-                
+                        .AddJsonBody(merged)
+
                 let parameters = this.requestContext.environment.headers @ this.requestContext.requestParameters.urlSegments
 
                 let req = 
@@ -70,8 +70,9 @@ module Client =
                     |> List.fold (fun (state:IRestRequest) p -> state.AddParameter(p)) restRequest 
 
                 let! response = client.Execute(req) |> Async.AwaitTask
-
-                return {Resource.data = parse(response); Resource.response = response; Resource.requestContext = this.requestContext}
+                let body, jo = parse(response)
+                this.requestContext.environment.responseVerificationStrategy req response body jo
+                return {Resource.data = jo; Resource.response = response; Resource.requestContext = this.requestContext; body = body}
             }
 
         member this.PostAsync newData = 
@@ -101,8 +102,9 @@ module Client =
 
                 let! res = client.Execute(req) |> Async.AwaitTask
 
-                let data = parse(res)
-                return { Resource.requestContext = this; response = res; data=data}
+                let body, jo = parse(res)
+                this.environment.responseVerificationStrategy req res body jo
+                return { Resource.requestContext = this; response = res; data=jo; body=body}
             } 
 
         static member private getEmbeddedResource (embedded:JToken) (follow:Follow) : Option<JToken> = 
@@ -150,7 +152,6 @@ module Client =
             async{
                 let! response = this.GetAsync()
                 return response.Parse<'T>()
-
             }
 
         member this.Follow (rel:string, urlSegments: (string*string) list) : RequestContext =

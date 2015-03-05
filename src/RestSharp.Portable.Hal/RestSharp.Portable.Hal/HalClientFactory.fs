@@ -3,12 +3,15 @@
 [<AutoOpen>]
 module Factories = 
     open RestSharp.Portable
+    open RestSharp.Portable.Hal.Helpers
 
     type HalClientFactory private (headers : Parameter list, httpClientFactory:IHttpClientFactory option) = 
         new() = HalClientFactory([], None)
         
         member x.CreateHalClient(domain:string) : HalClient = 
-            HalClient({EnvironmentParameters.client = new RestClient(domain); headers = headers; httpClientFactory = httpClientFactory})
+            let client = new RestClient(domain)
+            client.IgnoreResponseStatusCode <- true
+            HalClient({EnvironmentParameters.client = client; headers = headers; httpClientFactory = httpClientFactory; responseVerificationStrategy = IRestResponseExtensions.verifyResponse})
 
         member x.HttpClientFactory httpClientFactory = 
             HalClientFactory(headers, httpClientFactory)

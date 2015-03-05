@@ -5,7 +5,7 @@ module JsonParsingHelpers =
     open RestSharp.Portable
     open Newtonsoft.Json.Linq
 
-    let parse (response:IRestResponse) : JObject = 
+    let parse (response:IRestResponse) : string * JObject = 
         let encodingStr = 
     //HOLY KRAP BATMAN...WHY Contains throw exceptionz?!?!?!
     //            match this.response.Headers.Contains("Content-Encoding") with
@@ -19,6 +19,6 @@ module JsonParsingHelpers =
         let str = encoding.GetString(response.RawBytes, 0, response.RawBytes.Length)
         
         match str with
-        | "" -> null 
-        | _ -> JObject.Parse(str)
+        | "" -> (str, null )
+        | _ -> (str, JObject.Parse(str))
 
