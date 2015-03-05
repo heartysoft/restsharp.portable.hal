@@ -71,7 +71,7 @@ module Client =
 
                 let! response = client.Execute(req) |> Async.AwaitTask
                 let body, jo = parse(response)
-                this.requestContext.environment.responseVerificationStrategy req response body jo
+                this.requestContext.environment.responseVerificationStrategy response body jo
                 return {Resource.data = jo; Resource.response = response; Resource.requestContext = this.requestContext; body = body}
             }
 
@@ -103,7 +103,7 @@ module Client =
                 let! res = client.Execute(req) |> Async.AwaitTask
 
                 let body, jo = parse(res)
-                this.environment.responseVerificationStrategy req res body jo
+                this.environment.responseVerificationStrategy res body jo
                 return { Resource.requestContext = this; response = res; data=jo; body=body}
             } 
 

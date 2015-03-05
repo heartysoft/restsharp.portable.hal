@@ -8,7 +8,7 @@ module IRestResponseExtensions =
     open Newtonsoft.Json.Linq
           
 
-    let verifyResponse (attemptedRequest:IRestRequest) (response:IRestResponse) (body:string) (jo:JObject) : Unit = 
+    let verifyResponse (response:IRestResponse) (body:string) (jo:JObject) : Unit = 
         match response.IsSuccess with
         | true -> ()
         | false ->
@@ -17,12 +17,12 @@ module IRestResponseExtensions =
                 match jo with
                 | null ->
                      //bad request, but non json body. throw up.
-                     raise <| UnexpectedResponseException(response, body, jo, attemptedRequest)
+                     raise <| UnexpectedResponseException(response, body, jo)
                 | _ ->
                     if jo.Value("type") = "validation" then
                        let validationError = parseValidationErrors(jo)
-                       raise <| RemoteValidationException(validationError, response, body, jo, attemptedRequest)
-                    else raise <| UnexpectedResponseException(response, body, jo, attemptedRequest)
-            | _ ->  raise <| UnexpectedResponseException(response, body, jo, attemptedRequest)
+                       raise <| RemoteValidationException(validationError, response, body, jo)
+                    else raise <| UnexpectedResponseException(response, body, jo)
+            | _ ->  raise <| UnexpectedResponseException(response, body, jo)
 
 

@@ -8,7 +8,7 @@ type Follow =
     and 
         RequestParameters = { rootUrl : string; follow: Follow list; urlSegments : Parameter list; }
 
-type ResponseVerificationStrategy = IRestRequest -> IRestResponse -> string -> JObject -> Unit
+type ResponseVerificationStrategy = IRestResponse -> string -> JObject -> Unit
   
 type EnvironmentParameters = { client : RestClient; headers : Parameter list; httpClientFactory : IHttpClientFactory option; responseVerificationStrategy : ResponseVerificationStrategy}
 
