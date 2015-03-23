@@ -47,8 +47,17 @@ and
 
     member this.GetAsync () = 
         let work = async {
-            let! result = inner.GetAsync()
-            return Resource(result, this)
+            let! result = inner.GetAsync() |> Async.Catch
+            let res =
+                match result with
+                | Choice2Of2 (:?RestSharp.Portable.Hal.RemoteErrors.RemoteValidationException as e) -> 
+                    raise <| RestSharp.Portable.Hal.CSharp.RemoteValidationException(e)
+                | Choice2Of2 (:?RestSharp.Portable.Hal.RemoteErrors.UnexpectedResponseException as e) ->
+                    raise <| RestSharp.Portable.Hal.CSharp.UnexpectedResponseException(e)
+                | Choice2Of2 e -> raise e
+                | Choice1Of2 res -> res
+
+            return Resource(res, this)
         }
         work |> Async.StartAsTask
     

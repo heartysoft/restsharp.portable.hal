@@ -4,7 +4,7 @@ module RemoteErrors =
     open RestSharp.Portable
     open Newtonsoft.Json.Linq
 
-    type ValidationError = {message: string; errors : Map<string, string list>}
+    type ValidationError = {message: string; errors : System.Collections.Generic.IDictionary<string, string []>}
     type RemoteValidationException(error:ValidationError, response:IRestResponse, body:string, jo:JObject) = 
         inherit System.Exception(error.message)
         member this.Errors = error.errors
