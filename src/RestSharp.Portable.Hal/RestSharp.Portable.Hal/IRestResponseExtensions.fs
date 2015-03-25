@@ -19,7 +19,7 @@ module IRestResponseExtensions =
                      //bad request, but non json body. throw up.
                      raise <| UnexpectedResponseException(response, body, jo)
                 | _ ->
-                    if jo.Value("type") = "validation" then
+                    if response.ContentType = "application/hal.validation+json" then 
                        let validationError = parseValidationErrors(jo)
                        raise <| RemoteValidationException(validationError, response, body, jo)
                     else raise <| UnexpectedResponseException(response, body, jo)

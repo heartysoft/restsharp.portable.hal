@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http.Filters;
 using Hal.Controllers;
 using Newtonsoft.Json;
@@ -23,7 +24,8 @@ namespace Hal.ErrorHandling
         {
             //TODO: Find a way to content negitiate this. It seems it DOESN'T use the json hal media type formatter for some reason, hence stringifying here.
             context.Response = context.Request.CreateResponse(HttpStatusCode.BadRequest);
-            context.Response.Content = new StringContent(getJson());
+            context.Response.Content = new StringContent(getJson(), Encoding.UTF8, "application/hal.validation+json");
+            
             context.Response.ReasonPhrase = "Validation Failed";
         }
 
@@ -34,7 +36,6 @@ namespace Hal.ErrorHandling
 
         public class ValidationFailureDto
         {
-            public string Type { get { return "validation"; } }
             public string Message { get; private set; }
             public Dictionary<string, List<string>> Errors { get; private set; }
 

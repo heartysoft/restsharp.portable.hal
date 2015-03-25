@@ -102,11 +102,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheCowIntegrationTests.cs" />
+    <Compile Include="CSharpRemotePOSTErrorTests.cs" />
     <Compile Include="DTOs.cs" />
     <Compile Include="HalClientCSharpTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\SolutionInfo.cs" />
-    <Compile Include="CSharpRemoteErrorTests.cs" />
+    <Compile Include="CSharpRemoteGetErrorTests.cs" />
     <Compile Include="TestConfig.cs" />
   </ItemGroup>
   <ItemGroup>

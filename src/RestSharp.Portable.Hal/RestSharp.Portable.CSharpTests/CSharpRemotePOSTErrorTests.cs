@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Hal;
+using Hal.Controllers;
 using Microsoft.Owin.Testing;
 using NUnit.Framework;
 using RestSharp.Portable.Hal.CSharp;
@@ -9,7 +10,7 @@ namespace RestSharp.Portable.CSharpTests
 {
 
 	[TestFixture]
-	public class CSharpRemoteErrorTests
+	public class CSharpRemotePostErrorTests
 	{
 
 		private HalClient _client;
@@ -35,10 +36,10 @@ namespace RestSharp.Portable.CSharpTests
         {
             try
             {
-                var resource =
+                var form =
                     await _client.From("api/witherror")
-                        .Follow("error-details", new { id = "2" })
                         .GetAsync();
+                await form.PostAsync(new {Id = 4});
                 Assert.Fail("RemoteValidationException not raised when it was expected.");
             }
             catch (RemoteValidationException e)
@@ -56,10 +57,10 @@ namespace RestSharp.Portable.CSharpTests
         {
             try
             {
-                var resource =
+                var form =
                     await _client.From("api/witherror")
-                        .Follow("error-details", new { id = "1" })
                         .GetAsync();
+                await form.PostAsync(new {Id = 1});
                 Assert.Fail("Unexpected response exception not raised when it was expected.");
             }
             catch (UnexpectedResponseException e)

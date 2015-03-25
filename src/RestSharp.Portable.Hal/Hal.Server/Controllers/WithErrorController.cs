@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 using Hal.ErrorHandling;
 using Hal.Models;
@@ -32,6 +34,24 @@ namespace Hal.Controllers
                 });
         }
 
+
+        public HttpResponseMessage Post(SomeData data)
+        {
+            if (data.Id == 1)
+            {
+                throw new MyBusinessLogicException("My business logic exception message");
+            }
+
+            throw new ValidationFailedException("Overall message",
+                new[]
+                {
+                    new ValidationError("Name", "Your name is a bit weird. Are you sure it's Yoda?"),
+                    new ValidationError("Name", "Your name must be more than 4 characters...mwahhahahha....evil evil...lolz"),
+                    new ValidationError("Age", "Yeah, right. You ain't 350 and I know it.")
+                });
+        }
+
+
         public class MyBusinessLogicException : Exception
         {
             public MyBusinessLogicException(string message) : base(message)
@@ -49,5 +69,10 @@ namespace Hal.Controllers
         {
             this.Links.Add(LinkTemplates.WithErrorLinks.Details);
         }
+    }
+
+    public class SomeData
+    {
+        public int Id { get; set; }
     }
 }
