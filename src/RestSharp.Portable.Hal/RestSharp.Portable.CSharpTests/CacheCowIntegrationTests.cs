@@ -135,10 +135,10 @@ namespace RestSharp.Portable.CSharpTests
         /// <param name="server"></param>
         /// <param name="delegatingHandlers"></param>
         /// <returns></returns>
-        private static HttpClient createClientRaw(TestServer server, params DelegatingHandler[] delegatingHandlers)
+        private static System.Net.Http.HttpClient createClientRaw(TestServer server, params DelegatingHandler[] delegatingHandlers)
         {
             var handler = HttpClientFactory.CreatePipeline(server.Handler, delegatingHandlers);
-            return new HttpClient(handler) { BaseAddress = new Uri("http://localhost") };
+            return new System.Net.Http.HttpClient(handler) { BaseAddress = new Uri("http://localhost") };
         }
 
     }

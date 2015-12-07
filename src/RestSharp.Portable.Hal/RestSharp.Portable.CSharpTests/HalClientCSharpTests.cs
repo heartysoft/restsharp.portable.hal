@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Hal;
 using Microsoft.Owin.Testing;
 using NUnit.Framework;
-using RestSharp.Portable.CSharpTests;
 using RestSharp.Portable.Hal.CSharp;
-using RestSharp.Portable.HttpClientImpl;
-using Simple.Data.Extensions;
-using System.Threading.Tasks;
+using RestSharp.Portable.HttpClient.Impl;
 
 namespace RestSharp.Portable.CSharpTests
 {
@@ -25,12 +22,13 @@ namespace RestSharp.Portable.CSharpTests
             _delegatingHandlers = delegatingHandlers;
         }
 
-        public override HttpClient CreateClient(IRestClient client, IRestRequest request)
+        public override IHttpClient CreateClient(IRestClient client, IRestRequest request)
         {
+           
             var handler =  HttpClientFactory.CreatePipeline(_server.Handler, _delegatingHandlers);
-            return new HttpClient(handler){BaseAddress = new Uri("http://localhost")};
+            var httpClient = new System.Net.Http.HttpClient(handler){BaseAddress = new Uri("http://localhost")};
+            return new RestSharp.Portable.HttpClient.Impl.Http.DefaultHttpClient(httpClient);
         }
-
     }
     
     [TestFixture]

@@ -9,7 +9,7 @@ module Factories =
         new() = HalClientFactory([], None)
         
         member x.CreateHalClient(domain:string) : HalClient = 
-            let client = new RestClient(domain)
+            let client = new RestSharp.Portable.HttpClient.RestClient(domain)
             client.IgnoreResponseStatusCode <- true
             HalClient({EnvironmentParameters.client = client; headers = headers; httpClientFactory = httpClientFactory; responseVerificationStrategy = IRestResponseExtensions.verifyResponse})
 

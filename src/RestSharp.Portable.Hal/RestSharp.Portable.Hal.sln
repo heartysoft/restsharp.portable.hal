@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22310.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 12.0.31101.0
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RestSharp.Portable.Hal", "RestSharp.Portable.Hal\RestSharp.Portable.Hal.fsproj", "{7CA70E6A-0DE2-484E-A043-83169212FFDE}"
 EndProject
@@ -23,6 +23,13 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RestSharp.Portable.Hal.Tests", "RestSharp.Portable.Hal.Tests\RestSharp.Portable.Hal.Tests.fsproj", "{625B5BDF-CB58-4E6A-9C88-5B4BE8767429}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D58A6117-D6F4-4C6B-9270-B97615147D82} = {D58A6117-D6F4-4C6B-9270-B97615147D82}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{A07B497C-8ACC-46A9-91B0-76FC6F99A745}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\build-config.yaml = ..\..\build-config.yaml
+		..\..\nuget\RestSharp.Portable.Hal.CSharp.nuspec = ..\..\nuget\RestSharp.Portable.Hal.CSharp.nuspec
+		..\..\nuget\RestSharp.Portable.Hal.nuspec = ..\..\nuget\RestSharp.Portable.Hal.nuspec
 	EndProjectSection
 EndProject
 Global

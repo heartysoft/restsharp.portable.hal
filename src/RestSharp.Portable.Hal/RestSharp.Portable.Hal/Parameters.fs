@@ -10,5 +10,5 @@ type Follow =
 
 type ResponseVerificationStrategy = IRestResponse -> string -> JObject -> Unit
   
-type EnvironmentParameters = { client : RestClient; headers : Parameter list; httpClientFactory : IHttpClientFactory option; responseVerificationStrategy : ResponseVerificationStrategy}
+type EnvironmentParameters = { client : RestSharp.Portable.HttpClient.RestClient; headers : Parameter list; httpClientFactory : IHttpClientFactory option; responseVerificationStrategy : ResponseVerificationStrategy}
 

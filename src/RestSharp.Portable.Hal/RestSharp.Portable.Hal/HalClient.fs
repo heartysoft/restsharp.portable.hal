@@ -52,11 +52,12 @@ module Client =
         member this.Follow (rel:string) : RequestContext = 
             this.ApplyFollows (LinkFollow(rel, [])) []
 
-        member private this.submitAsync (``method`` : System.Net.Http.HttpMethod) newData : Async<Resource> =
+        member private this.submitAsync (``method`` : Method) newData : Async<Resource> =
             async {
                 let form = this.data
                 let merged = merge form newData
                 let url = this.Links.["self"].Value<string>("href")//TODO: fallback or maybe prefer response.uri
+                
 
                 let client = this.requestContext.environment.client
                 let restRequest = 
@@ -69,6 +70,7 @@ module Client =
                     parameters
                     |> List.fold (fun (state:IRestRequest) p -> state.AddParameter(p)) restRequest 
 
+                
                 let! response = client.Execute(req) |> Async.AwaitTask
                 let body, jo = parse(response)
                 this.requestContext.environment.responseVerificationStrategy response body jo
@@ -76,9 +78,9 @@ module Client =
             }
 
         member this.PostAsync newData = 
-            this.submitAsync HttpMethod.Post newData
-        member this.PutAsync data =  this.submitAsync System.Net.Http.HttpMethod.Put data
-        member this.DeleteAsync data =  this.submitAsync System.Net.Http.HttpMethod.Delete data 
+            this.submitAsync Method.POST newData
+        member this.PutAsync data =  this.submitAsync Method.PUT data
+        member this.DeleteAsync data =  this.submitAsync Method.DELETE data 
 
     and
         RequestContext = 

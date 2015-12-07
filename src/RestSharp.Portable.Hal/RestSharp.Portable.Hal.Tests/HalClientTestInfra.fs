@@ -14,12 +14,12 @@ module HalClientTestInfraHelpers =
     open Microsoft.Owin.Hosting
     open Microsoft.Owin.Testing
     open RestSharp.Portable
-    open RestSharp.Portable.HttpClientImpl
+    open RestSharp.Portable.HttpClient.Impl
 
     type TestHttpClientFactory (server:TestServer) =
         inherit DefaultHttpClientFactory() 
-        override this.CreateClient(restClient, request) : HttpClient = 
-            server.HttpClient
+        override this.CreateClient(restClient, request) : IHttpClient = 
+            new RestSharp.Portable.HttpClient.Impl.Http.DefaultHttpClient(server.HttpClient) :> IHttpClient
 
     let public rootUrl = "http://dummy-unused/"
 
